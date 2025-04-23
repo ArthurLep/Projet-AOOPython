@@ -21,6 +21,6 @@ class clients:
 class identity:
     def __init__(self, identity:int, clients:[clients]):
         self.clients = clients
-        self.identity = identity
+        self.identity = len(clients)
     def __str__(self):
         return f"Identité {self.identity}."
