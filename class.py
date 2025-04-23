@@ -18,4 +18,9 @@ class clients:
         def __str__(self):
             return f"Client {self.LastName} {self.FirstName} avec l'email {self.mail}."
 
-            
+class identity:
+    def __init__(self, identity:int, clients:[clients]):
+        self.clients = clients
+        self.identity = identity
+    def __str__(self):
+        return f"Identité {self.identity}."
