@@ -1,81 +1,162 @@
-import tkinter as tk
-from tkinter import ttk
-import time
+import customtkinter as ctk
+from tkinter import messagebox
+import json
+import os
 
-class MainApp(tk.Tk):
+# Config
+ctk.set_appearance_mode("system")
+ctk.set_default_color_theme("blue")
+
+# Load/save users
+users_file = "users.json"
+def load_users():
+    if os.path.exists(users_file):
+        with open(users_file, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_users():
+    with open(users_file, "w") as f:
+        json.dump(users, f, indent=4)
+
+users = load_users()
+
+class WelcomePage(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Meeting Room Booking System")
-        self.geometry("1024x640")
-        self.create_widgets()
-        self.update_time()  # Démarre la mise à jour de l'heure dès l'initialisation
+        self.title("MeetingPro - Welcome")
+        self.geometry("1025x700")
+        self.resizable(False, False)
 
-    def create_widgets(self):
-        label = ttk.Label(self, text="Welcome to MeetingPro !", font=("Impact", 35))
-        label.pack(pady=20)
+        main_frame = ctk.CTkFrame(self, corner_radius=20)
+        main_frame.pack(expand=True, padx=40, pady=40, fill="both")
+        main_frame.columnconfigure((0, 1), weight=1)
 
-        # Espace Clients
-        client_frame = ttk.LabelFrame(self, text="Client Area", padding="10")
-        client_frame.pack(fill="both", expand=True, padx=20, pady=10)
-        
-        btn_client = ttk.Button(client_frame, text="Access Customer Options", command=self.open_client_interface)
-        btn_client.pack(pady=5)
+        # Login Frame
+        login_frame = ctk.CTkFrame(main_frame, corner_radius=20)
+        login_frame.grid(row=0, column=0, padx=30, pady=30, sticky="nsew")
 
-        # Espace Administratif
-        admin_frame = ttk.LabelFrame(self, text="Administrative Area", padding="10")
-        admin_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        ctk.CTkLabel(login_frame, text="Login", font=ctk.CTkFont(size=22, weight="bold")).pack(pady=(20, 10))
+        self.login_role = ctk.CTkOptionMenu(login_frame, values=["client", "admin"])
+        self.login_role.pack(pady=10)
+        self.login_email = ctk.CTkEntry(login_frame, placeholder_text="Email")
+        self.login_email.pack(pady=10)
+        self.login_password = ctk.CTkEntry(login_frame, placeholder_text="Password", show="*")
+        self.login_password.pack(pady=10)
+        self.show_password_login_var = ctk.BooleanVar(value=False)
+        self.show_password_login_btn = ctk.CTkCheckBox(login_frame, text="👁️", variable=self.show_password_login_var, command=self.toggle_password_visibility)
+        self.show_password_login_btn.pack()
+        ctk.CTkButton(login_frame, text="Login", command=self.login_action).pack(pady=20)
 
-        btn_admin = ttk.Button(admin_frame, text="Access administrative options", command=self.open_admin_interface)
-        btn_admin.pack(pady=5)
+        # Signup Frame
+        signin_frame = ctk.CTkFrame(main_frame, corner_radius=20)
+        signin_frame.grid(row=0, column=1, padx=30, pady=30, sticky="nsew")
 
-        # Display current time and date
-        self.time_label = ttk.Label(self, font=("Helvetica", 14))
-        self.time_label.pack(side="bottom", pady=10)
+        ctk.CTkLabel(signin_frame, text="Sign Up", font=ctk.CTkFont(size=22, weight="bold")).pack(pady=(20, 10))
+        self.signup_role = ctk.CTkOptionMenu(signin_frame, values=["client", "admin"])
+        self.signup_role.pack(pady=10)
+        self.signup_first_name = ctk.CTkEntry(signin_frame, placeholder_text="First Name")
+        self.signup_first_name.pack(pady=10)
+        self.signup_last_name = ctk.CTkEntry(signin_frame, placeholder_text="Last Name")
+        self.signup_last_name.pack(pady=10)
+        self.signup_email = ctk.CTkEntry(signin_frame, placeholder_text="New Email")
+        self.signup_email.pack(pady=10)
+        self.signup_password = ctk.CTkEntry(signin_frame, placeholder_text="New Password", show="*")
+        self.signup_password.pack(pady=10)
+        self.show_password_signup_var = ctk.BooleanVar(value=False)
+        self.show_password_signup_btn = ctk.CTkCheckBox(signin_frame, text="👁️", variable=self.show_password_signup_var, command=self.toggle_signup_password_visibility)
+        self.show_password_signup_btn.pack()
+        ctk.CTkButton(signin_frame, text="Create Account", command=self.signup_action).pack(pady=20)
 
-    def update_time(self):
-        # Mise à jour de l'heure
-        current_time = time.strftime("%Y-%m-%d %H:%M:%S")
-        self.time_label.config(text=current_time)
-        self.after(1000, self.update_time)  # Re-met à jour chaque seconde
+    def toggle_password_visibility(self):
+        if self.show_password_login_var.get():
+            self.login_password.configure(show="")  # Affiche le mot de passe
+        else:
+            self.login_password.configure(show="*")  # Cache le mot de passe
 
-    def open_admin_interface(self):
-        # Ouvre une nouvelle fenêtre ou interface pour les options administratives
-        admin_window = tk.Toplevel(self)
-        admin_window.title("Admin Interface")
-        admin_window.geometry("400x300")
-        
-        # Ajouter des options administratives
-        admin_label = ttk.Label(admin_window, text="Choose an admin option", font=("Helvetica", 14))
-        admin_label.pack(pady=20)
+    def toggle_signup_password_visibility(self):
+        if self.show_password_signup_var.get():
+            self.signup_password.configure(show="")  # Affiche le mot de passe
+        else:
+            self.signup_password.configure(show="*")  # Cache le mot de passe    
 
-        btn_salle = ttk.Button(admin_window, text="Add a new room", command=self.add_room)
-        btn_salle.pack(pady=5)
+    def login_action(self):
+        email = self.login_email.get()
+        password = self.login_password.get()
+        role = self.login_role.get()
 
-        btn_reservation = ttk.Button(admin_window, text="See the reservations", command=self.see_reservations)
-        btn_reservation.pack(pady=5)
+        if email in users and users[email]["Password"] == password:
+            if users[email]["Role"] == role:
+                self.destroy()
+                if role == "admin":
+                    AdminInterface().mainloop()
+                else:
+                    ClientInterface(email=email).mainloop()
+            else:
+                messagebox.showerror("Role Error", "Incorrect role selected.")
+        else:
+            messagebox.showerror("Login Failed", "Invalid credentials.")
 
-        btn_client = ttk.Button(admin_window, text="Add a new client", command=self.add_client)
-        btn_client.pack(pady=5)
-    
-    def open_client_interface(self):
-        # Ouvre une nouvelle fenêtre ou interface pour les options client
-        client_window = tk.Toplevel(self)
-        client_window.title("Client Interface")
-        client_window.geometry("400x300")
+    def signup_action(self):
+        first = self.signup_first_name.get()
+        last = self.signup_last_name.get()
+        email = self.signup_email.get()
+        pwd = self.signup_password.get()
+        role = self.signup_role.get()
 
-        # Ajouter des options client
-        client_label = ttk.Label(client_window, text="Choose a client option", font=("Helvetica", 14))
-        client_label.pack(pady=20)
+        if not all([first, last, email, pwd]):
+            return messagebox.showwarning("Sign Up", "Please fill all fields.")
 
-    def add_room(self):
-        print("Add a new room")
+        if email in users:
+            return messagebox.showwarning("Sign Up", "Email already exists.")
 
-    def see_reservations(self):
-        print("See the reservations")
+        users[email] = {
+            "First Name": first,
+            "Last Name": last,
+            "Password": pwd,
+            "Role": role
+        }
+        save_users()
+        messagebox.showinfo("Success", "Account created successfully.")
+        self.destroy()
+        if role == "admin":
+            AdminInterface().mainloop()
+        else:
+            ClientInterface(email=email).mainloop()
 
-    def add_client(self):
-        print("Add a new client")
+class ClientInterface(ctk.CTk):
+    def __init__(self, email):
+        super().__init__()
+        self.title("Client Dashboard")
+        self.geometry("1025x700")
+        self.email = email
+        user_data = users.get(email, {})
+        self.first_name = user_data.get("First Name", "")
+        self.last_name = user_data.get("Last Name", "")
+
+        header_frame = ctk.CTkFrame(self)
+        header_frame.pack(pady=10, anchor="ne")
+        ctk.CTkLabel(header_frame, text=f"{self.first_name} {self.last_name}", font=ctk.CTkFont(size=18)).pack(side="left")
+        ctk.CTkLabel(header_frame, text="⚙️", font=ctk.CTkFont(size=28)).pack(side="left", padx=10)
+
+        main_frame = ctk.CTkFrame(self, corner_radius=20)
+        main_frame.pack(expand=True, padx=40, pady=40, fill="both")
+
+        ctk.CTkButton(main_frame, text="Book a Room", command=self.book_room).pack(pady=20)
+        ctk.CTkButton(main_frame, text="View Reservations", command=self.view_reservations).pack(pady=20)
+
+    def book_room(self):
+        messagebox.showinfo("Booking", "Booking feature coming soon!")
+
+    def view_reservations(self):
+        messagebox.showinfo("Reservations", "Reservation list coming soon!")
+
+class AdminInterface(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Admin Dashboard")
+        self.geometry("800x500")
+        ctk.CTkLabel(self, text="Welcome Admin", font=ctk.CTkFont(size=22)).pack(pady=40)
 
 if __name__ == "__main__":
-    app = MainApp()
-    app.mainloop()
+    WelcomePage().mainloop()
