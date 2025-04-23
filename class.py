@@ -1,4 +1,4 @@
-
+list_id=[]
 class Error_room(Exception):
     pass
 class Error_clients(Exception):
@@ -11,16 +11,20 @@ class room:
         return f"Salle {self.nom} avec une capacité de {self.capacite} personnes."
 
 class clients:
-    def __init__(self, LastName:str, FirstName:str, mail:str, identity:int):
+    def __init__(self, LastName:str, FirstName:str, mail:str):
         self.LastName = LastName
         self.FirstName = FirstName
         self.mail = mail
+        self.identity = self.identity()
         def __str__(self):
-            return f"Client {self.LastName} {self.FirstName} avec l'email {self.mail}."
+            return f"Client {self.LastName} {self.FirstName} avec l'email {self.mail} et son numéro est {self.identity}."
+        def identity(self):
+            self.identity=random.randint(1,9999)
+            if self.identity in list_id:
+                identity(self)
+            else:
+                list_id.append(self.identity)
+                return self.identity
 
-class identity:
-    def __init__(self, identity:int, clients:[clients]):
-        self.clients = clients
-        self.identity = len(clients)
-    def __str__(self):
-        return f"Identité {self.identity}."
+
+
