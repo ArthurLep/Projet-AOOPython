@@ -12,14 +12,14 @@ class room:
         self.type = str
         self.capacity = 0
     def __str__(self):
-        return f"Room {self.nom} with capacity of {self.capacite} personnes."
+        return f"Room {self.nom} with capacity of {self.capacity} person."
     def add_room(self, type:str, capacity:int):
         self.type = type
         self.capacity = capacity
         return self.type, self.capacity
 
 class clients:
-    def __init__(self, LastName:str, FirstName:str, mail:str,clients: []):
+    def __init__(self, LastName:str, FirstName:str, mail:str):
         self.LastName = LastName
         self.FirstName = FirstName
         self.mail = mail
