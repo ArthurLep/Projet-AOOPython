@@ -1,3 +1,4 @@
+import random
 list_id=[]
 class Error_room(Exception):
     pass
