@@ -26,4 +26,15 @@ L’interface permet aussi de s’enregistrer en tant que **nouvel utilisateur**
 
 Chaque utilisateur est ensuite redirigé vers une interface spécifique selon son rôle.
 
-**Différentes Librairies utilisées :** CustomTkinter pour l'interface, Pillow pour les images
+#### 🧑‍💻 Interface Utilisateur
+
+L'interface client comprend plusieurs fonctionnalités clés :
+- **Visualisation des réservations** en cours.
+- **Création de nouvelles réservations** de salles disponibles.
+- **Annulation de réservations** existantes.
+- **Affichage d'un calendrier interactif** (via `tkcalendar`) dès la page d'accueil, permettant une navigation dans les dates de réservation.
+
+## 📚 Différentes librairies utilisées 
+- `CustomTkinter` pour une interface plus moderne et réactive. 
+- `Pillow` pour la gestion des images  
+- `tkcalendar` pour l’intégration du calendrier
