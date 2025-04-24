@@ -35,6 +35,7 @@ def save_reservations(data):
 
 # Welcome page : Login and Sign Up
 class WelcomePage(ctk.CTk):
+    """ This class will be used to manage the welcome page. """
     def __init__(self):
         super().__init__()
         self.title("MeetingPro - Welcome")
@@ -79,12 +80,14 @@ class WelcomePage(ctk.CTk):
         ctk.CTkButton(signin_frame, text="Create Account", command=self.signup_action).pack(pady=20)
 
     def toggle_password_visibility(self):
+        """ This function will be used to toggle the password visibility in the login form. """
         self.login_password.configure(show="" if self.show_password_login_var.get() else "*")
 
     def toggle_signup_password_visibility(self):
         self.signup_password.configure(show="" if self.show_password_signup_var.get() else "*")
 
     def login_action(self):
+        """ This function will be used to log in the user. """
         email = self.login_email.get()
         password = self.login_password.get()
         role = self.login_role.get()
@@ -102,6 +105,7 @@ class WelcomePage(ctk.CTk):
             messagebox.showerror("Login Failed", "Invalid credentials.")
 
     def signup_action(self):
+        """ This function will be used to create a new account. """
         first = self.signup_first_name.get()
         last = self.signup_last_name.get()
         email = self.signup_email.get()
@@ -118,7 +122,8 @@ class WelcomePage(ctk.CTk):
             "First Name": first,
             "Last Name": last,
             "Password": pwd,
-            "Role": role
+            "Role": role,
+            "ProfilePicture":""
         }
         save_users()
         messagebox.showinfo("Success", "Account created successfully.")
@@ -130,6 +135,7 @@ class WelcomePage(ctk.CTk):
 
 # Client interface
 class ClientInterface(ctk.CTk):
+    """ This class will be used to manage the client interface. """
     def __init__(self, email):
         super().__init__()
         self.title("Client Dashboard")
@@ -152,7 +158,7 @@ class ClientInterface(ctk.CTk):
         self.sidebar.grid(row=0, column=0, sticky="ns")
 
         # profile picture
-        self.profile_image_path = "default_profile.png"
+        self.profile_image_path = users[email].get("ProfilePicture", "default_profile.png")
         self.profile_image = self.load_profile_image(self.profile_image_path)
         self.profile_button = ctk.CTkButton(self.sidebar, image=self.profile_image, text="", width=100, height=100, command=self.change_profile_picture)
         self.profile_button.grid(row=0, column=0, pady=20, padx=10)
@@ -162,28 +168,29 @@ class ClientInterface(ctk.CTk):
         self.name_label.grid(row=1, column=0, pady=5)
 
         # Appearance mode
-        ctk.CTkLabel(self.sidebar, text="Mode apparence", anchor="w").grid(row=2, column=0, pady=(20, 0), padx=10, sticky="w")
+        ctk.CTkLabel(self.sidebar, text="Appearance mode", anchor="w").grid(row=2, column=0, pady=(20, 0), padx=10, sticky="w")
         self.appearance_menu = ctk.CTkOptionMenu(self.sidebar, values=["Light", "Dark", "System"], command=self.change_appearance)
         self.appearance_menu.set("System")
+        self.appearance_menu.bind("<Return>", lambda event: self.change_appearance(self.appearance_menu.get()))
         self.appearance_menu.grid(row=3, column=0, padx=10, pady=5)
 
         # Font size
-        ctk.CTkLabel(self.sidebar, text="Taille de police", anchor="w").grid(row=4, column=0, pady=(20, 0), padx=10, sticky="w")
-        self.scale_menu = ctk.CTkOptionMenu(self.sidebar, values=["80%", "100%", "120%"], command=self.change_scale)
+        ctk.CTkLabel(self.sidebar, text="Scale", anchor="w").grid(row=4, column=0, pady=(20, 0), padx=10, sticky="w")
+        self.scale_menu = ctk.CTkOptionMenu(self.sidebar, values=["80%","90%", "100%","110%", "120%"], command=self.change_scale)
         self.scale_menu.set("100%")
+        self.scale_menu.bind("<Return>", lambda event: self.change_scale(self.scale_menu.get()))
         self.scale_menu.grid(row=5, column=0, padx=10, pady=5)
 
         # Logout button
-        ctk.CTkButton(self.sidebar, text="Déconnexion", fg_color="#f97316", command=self.logout).grid(row=6, column=0, pady=30, padx=10)
+        ctk.CTkButton(self.sidebar, text="Sign out", fg_color="#f97316", command=self.logout).grid(row=6, column=0, pady=30, padx=10)
 
         # --------------- Main Area ---------------- #
         self.main_frame = ctk.CTkFrame(self, corner_radius=20, fg_color="#1e1e2f")
         self.main_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.main_frame.grid_columnconfigure(0, weight=2)
         self.main_frame.grid_rowconfigure(0, weight=1)
 
-        # Contenu exemple
         now = datetime.datetime.now()
         self.date_label = ctk.CTkLabel(self.main_frame, text=now.strftime("%A, %d %B %Y"), font=ctk.CTkFont(size=self.current_font_size))
         self.date_label.grid(row=0, column=0, pady=20)
@@ -201,24 +208,47 @@ class ClientInterface(ctk.CTk):
         self.view_res_button = ctk.CTkButton(self.button_frame, text="View reservations", width=180, command=self.view_reservations_action)
         self.view_res_button.grid(row=0, column=1, padx=10)
 
+        self.view_delete_button = ctk.CTkButton(self.button_frame, text="Delete reservations", width=180, command=self.delete_reservations_action)
+        self.view_delete_button.grid(row=0, column=2, padx=10)
+
         self.calendar_frame = ctk.CTkFrame(self.main_frame)
         self.calendar_frame.grid(row=3, column=0, sticky="ew", padx=20, pady=20)
 
         self.calendar = Calendar(self.calendar_frame, selectmode='day', date_pattern='yyyy-mm-dd')
         self.calendar.pack(expand=True, fill="both")
 
+        self.highlight_user_reservations()
+    
+    def highlight_user_reservations(self):
+        """ This function will be used to highlight the user's reservations in the calendar. """
+        reservations = load_reservations()
+        user_reservations = reservations.get(self.email, [])
+        
+        for res in user_reservations:
+            date_str = res["date"]
+            try:
+                self.calendar.calevent_create(datetime.datetime.strptime(date_str, "%Y-%m-%d"), 'Reserved', 'res')
+            except ValueError:
+                continue
+
+        self.calendar.tag_config('res', background='orange', foreground='black')
+
     def update_clock(self):
+        """ This function will be used to update the clock. """
         now = datetime.datetime.now().strftime("%H:%M:%S")
         self.clock_label.configure(text=now)
         self.after(1000, self.update_clock)
 
     def set_font(self, size):
+        """ This function will be used to set the font size. """
         self.current_font_size = size
 
     def change_appearance(self, mode):
+        """ This function will be used to change the appearance mode. """
         ctk.set_appearance_mode(mode)
 
     def change_scale(self, value):
+        """ This function will be used to change the scale of the font. """
         scale_percent = int(value.strip('%'))
         font_size = int(16 * (scale_percent / 100))
         self.set_font(font_size)
@@ -226,6 +256,7 @@ class ClientInterface(ctk.CTk):
         self.clock_label.configure(font=ctk.CTkFont(size=font_size - 2))
 
     def load_profile_image(self, path):
+        """ This function will be used to load the profile image. """
         if os.path.exists(path):
             image = Image.open(path).resize((100, 100))
         else:
@@ -233,23 +264,35 @@ class ClientInterface(ctk.CTk):
         return ctk.CTkImage(light_image=image, dark_image=image, size=(100, 100))
 
     def change_profile_picture(self):
+        """ This function will be used to change the profile picture. """
         filepath = filedialog.askopenfilename(filetypes=[("Images", "*.png *.jpg *.jpeg")])
         if filepath:
             self.profile_image_path = filepath
             self.profile_image = self.load_profile_image(filepath)
             self.profile_button.configure(image=self.profile_image)
+            users[self.email]["ProfilePicture"] = filepath
+            save_users()
             
     def reserve_action(self):
-        print("Réserver une nouvelle réservation")
+        """ This function will be used to reserve a meeting room. """
+        return messagebox.showinfo("Reservation", "Functionality in development.")
 
     def view_reservations_action(self):
-        print("Afficher les réservations de l'utilisateur")
+        """ This function will be used to view reservations. """
+        return messagebox.showinfo("View Reservations", "Functionality in development.")
+
+    def delete_reservations_action(self):
+        """ This function will be used to delete reservations. """
+        return messagebox.showinfo("Delete Reservations", "Functionality in development.")
 
     def logout(self):
+        """ This function will be used to log out the user. """
         self.destroy()
+        WelcomePage().mainloop()
 
 # Admin interface
 class AdminInterface(ctk.CTk):
+    """ This class will be used to manage the admin interface. """
     def __init__(self):
         super().__init__()
         self.title("Admin Dashboard")
