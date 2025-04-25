@@ -6,6 +6,14 @@ class Error_room(Exception):
     pass
 class Error_clients(Exception):
     pass
+class admin:
+    def __init__(self, LastName:str, FirstName:str, mail:str, password:str):
+        self.password = password
+        self.LastName = LastName
+        self.FirstName = FirstName
+        self.mail = mail
+        def __str__(self):
+            return f"Admin {self.LastName} {self.FirstName} with mail {self.mail}."
 class room:
     def __init__(self, Name:str):
         self.nom = Name
@@ -19,7 +27,8 @@ class room:
         return self.type, self.capacity
 
 class clients:
-    def __init__(self, LastName:str, FirstName:str, mail:str):
+    def __init__(self, LastName:str, FirstName:str, mail:str, password:str):
+        self.password = password
         self.LastName = LastName
         self.FirstName = FirstName
         self.mail = mail
