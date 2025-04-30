@@ -1,4 +1,5 @@
 import random
+import datetime
 
 list_id=[]
 
@@ -31,6 +32,7 @@ class room:## creation de la classe salle
             self.capacity = 4
         else:
             raise Error_room("Invalid room type.")
+        
 class clients: ## creation de la classe client
     def __init__(self, LastName:str, FirstName:str, mail:str, password:str):
         self.password = password
@@ -67,6 +69,7 @@ class list_client(clients):
 class list_room(room):
     def __init__(self, room:room):
         self.room = room
+        self.date = datetime.date()
         self.list_room = [""]
         self.reservable = [""]
         self.full = [""]
