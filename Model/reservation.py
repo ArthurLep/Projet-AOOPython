@@ -1,9 +1,9 @@
-from Model.clients import clients
-from Model.room import room
+from Model.clients import Clients
+from Model.room import Room
 import uuid
 from datetime import date
 
-class reservation:
+class Reservation:
     def __init__(self, client:clients, room:room, date_reservation:date):
         self.client = client
         self.room = room
@@ -12,3 +12,5 @@ class reservation:
     def __str__(self):
         return f"Reservation {self.id} for {self.client} in {self.room} on {self.date_reservation}."
 
+class ErrorReservation(Exception):
+    pass
