@@ -3,7 +3,7 @@ from Model.room import room, ErrorRoom
 from Model.reservation import reservation
 import uuid
 from datetime import date
-class list_client:
+class ListClients:
     def __init__(self, clients:clients):
         self.clients = clients
         self.list_client = []
@@ -19,7 +19,7 @@ class list_client:
             self.list_client.remove(client)
         else:
             raise ErrorClients("Client not found in the list.")
-class list_room:
+class ListRoom:
     def __init__(self, room:room):
         self.room = room
         self.list_room = []
@@ -35,7 +35,7 @@ class list_room:
             self.list_room.remove(room)
         else:
             raise ErrorRoom("Room not found in the list.")
-class list_reservation:
+class ListReservation:
     def __init__(self, reservation:reservation):
         self.reservation = reservation
         self.list_reservation = []
