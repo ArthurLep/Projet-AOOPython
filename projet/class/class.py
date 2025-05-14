@@ -3,6 +3,15 @@ import datetime
 
 list_id=[]
 
+class date:
+    def __init__(self, Day:str, Month:str, Year:str):
+        self.Day = Day  
+        self.Month = Month
+        self.Year = Year    
+    def __str__(self):
+        return f"Date {self.Day}/{self.Month}/{self.Year}."
+
+
 class Error_room(Exception):
     pass
 class Error_clients(Exception):
@@ -17,13 +26,11 @@ class admin:
         return f"Admin {self.LastName} {self.FirstName} with mail {self.mail}."
 class room:## creation de la classe salle
 
-    def __init__(self, Name:str):
+    def __init__(self, Name:str,type:str, capacity:int):
         self.nom = Name
         self.type = str
         self.capacity = 0
-    def __str__(self):
-        return f"Room {self.nom} with capacity of {self.capacity} person."
-    def add_room(self, type:str, capacity:int): ## creation de la fonction qui permet d'ajouter une salle
+        self.type = type
         if type == "Informatique":
             self.capacity = 4
         elif type == "Conférence":
@@ -33,7 +40,7 @@ class room:## creation de la classe salle
         else:
             raise Error_room("Invalid room type.")
         
-class clients: ## creation de la classe client
+class clients:
     def __init__(self, LastName:str, FirstName:str, mail:str, password:str):
         self.password = password
         self.LastName = LastName
@@ -66,33 +73,22 @@ class list_client(clients):
         else:
             raise Error_clients("Client not found in the list.")
 
-class list_room(room):
-    def __init__(self, room:room):
+class list_room(room, date):
+    def __init__(self, room:room, date:date):
         self.room = room
-        self.date = datetime.date()
-        self.list_room = [""]
-        self.reservable = [""]
-        self.full = [""]
+        self.date = date
+        self.reservable_room = []
+        self.full_room = []
     def add_room(self, room:room):
-            self.reservable.append(room)
-    def __str__(self):
-        return f"List of rooms: {self.list_room}."
-    def free(self, room:room):
-        for room in self.list_room:
-            if room.capacity > 0:
-                self.reservable.append(room)
-        return self.reservable
-    def unfree(self, room:room, client:clients):
-        if room in self.list_room and client in self.list_client:
-            room.capacity -= 1
-            if room.capacity == 0:
-                self.full.append(room)
-                self.reservable.remove(room)
-            return self.full
+        if room not in self.reservable_room:
+            self.reservable_room.append(room)
         else:
-            raise Error_room("Room or client not found.")
-
-
-
-
-
+            raise Error_room("Room already exists in the list.")
+    def __str__(self):
+        return f"List of rooms: {self.reservable_room}."
+    def reserve_room(self, room:room):
+        if room in self.reservable_room:
+            self.reservable_room.remove(room)
+            self.full_room.append(room)
+        else:
+            raise Error_room("Room not found in the list.")
