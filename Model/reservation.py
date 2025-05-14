@@ -4,7 +4,7 @@ import uuid
 from datetime import date
 
 class Reservation:
-    def __init__(self, client:clients, room:room, date_reservation:date):
+    def __init__(self, client:Clients, room:Room, date_reservation:date):
         self.client = client
         self.room = room
         self.date_reservation = date_reservation
