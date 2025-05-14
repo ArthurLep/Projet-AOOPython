@@ -3,7 +3,7 @@ import uuid
 class ErrorClients(Exception):
     pass
 
-class clients:
+class Clients:
     def __init__(self, LastName:str, FirstName:str, mail:str, password:str):
         self.password = password
         self.LastName = LastName
