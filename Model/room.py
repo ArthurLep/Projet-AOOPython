@@ -1,7 +1,7 @@
 class ErrorRoom(Exception):
     pass
 
-class room:
+class Room:
 
     def __init__(self, Name:str,type:str, capacity:int):
         self.nom = Name
