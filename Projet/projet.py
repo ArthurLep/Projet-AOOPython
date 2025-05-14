@@ -50,14 +50,14 @@ class list_client:
         if client not in self.list_client:
             self.list_client.append(client)
         else:
-            raise Error_clients("Client already exists in the list.")
+            raise ErrorClients("Client already exists in the list.")
     def __str__(self):
         return f"List of clients: {self.list_client}."
     def remove_client(self, client:clients):
         if client in self.list_client:
             self.list_client.remove(client)
         else:
-            raise Error_clients("Client not found in the list.")
+            raise ErrorClients("Client not found in the list.")
 class list_room:
     def __init__(self, room:room):
         self.room = room
