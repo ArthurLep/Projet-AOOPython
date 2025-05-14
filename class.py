@@ -3,6 +3,15 @@ import datetime
 
 list_id=[]
 
+class date:
+    def __init__(self, Day:str, Month:str, Year:str):
+        self.Day = Day  
+        self.Month = Month
+        self.Year = Year    
+    def __str__(self):
+        return f"Date {self.Day}/{self.Month}/{self.Year}."
+
+
 class Error_room(Exception):
     pass
 class Error_clients(Exception):
