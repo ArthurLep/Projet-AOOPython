@@ -79,5 +79,24 @@ def client_cancel_reservation(client: Clients, reservation: Reservation):
     except Exception as e:
         print(f"Error cancelling reservation: {e}") 
 
+def supp_client(client: Clients, database: database.ListClients):
+    try:
+        #suppression du client de la base de donnee
+        database.remove_client(client)
+        print(f"Client {client} removed from the database.")
+    except Exception as e:
+        print(f"Error removing client from database: {e}")
+
+def supp_room(room: Room, database: database.ListRoom):
+    try:
+        #suppression de la salle de la base de donnee
+        database.remove_room(room)
+        print(f"Room {room} removed from the database.")
+    except Exception as e:
+        print(f"Error removing room from database: {e}")
+
+
+
+
 
         
