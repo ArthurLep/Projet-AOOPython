@@ -51,3 +51,4 @@ class ListReservation:
             self.list_reservation.remove(reservation)
         else:
             raise ErrorRoom("Reservation not found in the list.")
+    
