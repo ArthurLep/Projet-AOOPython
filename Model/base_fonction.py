@@ -95,8 +95,4 @@ def supp_room(room: Room, database: database.ListRoom):
     except Exception as e:
         print(f"Error removing room from database: {e}")
 
-
-
-
-
-        
+       
