@@ -1,0 +1,17 @@
+[project]
+name = "Projet_Python"
+version = "0.1.0"
+description = "Gestion de réservation de salles avec interface Tkinter"
+authors = [{ name = "Yasmine", email = "toto@uha.fr" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "BSD-3-Clause" }
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = ["pytest", "tkcalendar", "customtkinter"]
+
+[project.urls]
+repository = ""
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"

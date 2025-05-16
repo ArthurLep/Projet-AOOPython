@@ -2,11 +2,20 @@ import customtkinter as ctk
 from tkinter import messagebox
 from tkcalendar import Calendar
 import datetime
+from reserve_view import ReserveView
+from src.view.add_client_view import AddClientView
+from src.view.display_view import DisplayView
+from src.model.database import ListClients, ListRoom, ListReservation
 
 
 class HomeScreen(ctk.CTk):
     def __init__(self):
         super().__init__()
+
+        self.clients_db = ListClients()
+        self.rooms_db = ListRoom()
+        self.reservations_db = ListReservation()
+
         self.title("MeetingPro - Accueil")
         self.geometry("1000x600")
         self.configure(fg_color="#1e1e2f")

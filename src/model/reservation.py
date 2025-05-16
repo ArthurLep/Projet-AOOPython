@@ -11,6 +11,5 @@ class Reservation:
         self.id = str(uuid.uuid4())
     def __str__(self):
         return f"Reservation {self.id} for {self.client} in {self.room} on {self.date_reservation}."
-
 class ErrorReservation(Exception):
     pass

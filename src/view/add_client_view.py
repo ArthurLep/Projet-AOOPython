@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import model.database as db
+from src.model.database import ListClients
 
 
 class AddClientView(ctk.CTkFrame):
