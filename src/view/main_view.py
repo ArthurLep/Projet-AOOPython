@@ -1,42 +1,36 @@
-# main_view.py
 import customtkinter as ctk
-from tkinter import ttk
 from View.add_client_view import AddClientView
-from Model import database as db_module
+from Model.database import ListClients
 
 
 class MainView(ctk.CTk):
-    """Interface principale basique sans intégration modèle"""
-
     def __init__(self):
         super().__init__()
         self.title("MeetingPro - Interface")
         self.geometry("1000x600")
 
-        self.database = db_module.ListClients()
+        self.database = ListClients()
 
-        # Configuration du thème
+        # Apparence
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
 
-        # Configuration de la grille
+        # Grille principale
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # --------------- Barre latérale --------------- #
+        # ---------------- Barre latérale ---------------- #
         self.sidebar = ctk.CTkFrame(self, width=220, corner_radius=0)
-        self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
+        self.sidebar.grid(row=0, column=0, sticky="ns")
 
-        # Logo
         self.logo_label = ctk.CTkLabel(
             self.sidebar, text="MeetingPro", font=ctk.CTkFont(size=20, weight="bold")
         )
         self.logo_label.pack(pady=40)
 
-        # Boutons de navigation
         nav_buttons = [
             ("Accueil", self.show_accueil),
-            ("Ajouter", self.show_ajouter),
+            ("Ajouter", self.show_ajouter_menu),
             ("Réserver", self.show_reserver),
             ("Afficher", self.show_afficher),
         ]
@@ -47,13 +41,13 @@ class MainView(ctk.CTk):
             )
             btn.pack(pady=5, padx=10, fill="x")
 
-        # --------------- Conteneur principal --------------- #
+        # ---------------- Conteneur central ---------------- #
         self.main_container = ctk.CTkFrame(self, fg_color="transparent")
         self.main_container.grid(row=0, column=1, sticky="nsew")
         self.main_container.grid_columnconfigure(0, weight=1)
         self.main_container.grid_rowconfigure(0, weight=1)
 
-        # Création des vues
+        # Dictionnaire des vues
         self.views = {}
         self.create_views()
         self.show_accueil()
@@ -61,47 +55,83 @@ class MainView(ctk.CTk):
     def create_views(self):
         # Vue Accueil
         accueil_frame = ctk.CTkFrame(self.main_container)
-        self.views["accueil"] = accueil_frame
         ctk.CTkLabel(
             accueil_frame,
             text="Bienvenue sur MeetingPro\nSélectionnez une action dans la barre latérale",
             font=ctk.CTkFont(size=18),
-        ).pack(pady=100)
+            justify="center",
+        ).pack(expand=True)
+        self.views["accueil"] = accueil_frame
 
-        # Vue Ajouter
-        add_client_view = AddClientView(self.main_container, self.database)
-        self.views["ajouter"] = add_client_view
-        # Ne pas ajouter de label ici, AddClientView a déjà ses widgets
+        # Vue menu "Ajouter"
+        ajouter_menu = ctk.CTkFrame(self.main_container)
+        ctk.CTkLabel(
+            ajouter_menu, text="Que souhaitez-vous ajouter ?", font=ctk.CTkFont(size=18)
+        ).pack(pady=40)
+
+        btn_client = ctk.CTkButton(
+            ajouter_menu, text="Ajouter un client", command=self.show_add_client
+        )
+        btn_client.pack(pady=10)
+
+        btn_salle = ctk.CTkButton(
+            ajouter_menu, text="Ajouter une salle", command=self.show_add_room
+        )
+        btn_salle.pack(pady=10)
+
+        self.views["ajouter_menu"] = ajouter_menu
+
+        # Vue Ajouter un client
+        ajouter_client_frame = ctk.CTkFrame(self.main_container)
+        self.add_client_view = AddClientView(ajouter_client_frame, self.database)
+        self.add_client_view.pack(fill="both", expand=True)
+        self.views["ajouter_client"] = ajouter_client_frame
+
+        # Vue Ajouter une salle (à implémenter plus tard)
+        ajouter_salle_frame = ctk.CTkFrame(self.main_container)
+        ctk.CTkLabel(
+            ajouter_salle_frame,
+            text="Ajout de salle - à venir",
+            font=ctk.CTkFont(size=16),
+        ).pack(pady=100)
+        self.views["ajouter_salle"] = ajouter_salle_frame
 
         # Vue Réserver
         reserver_frame = ctk.CTkFrame(self.main_container)
-        self.views["reserver"] = reserver_frame
         ctk.CTkLabel(
             reserver_frame,
-            text="Section de réservation\nÀ implémenter",
+            text="Réservation - à implémenter",
             font=ctk.CTkFont(size=16),
-        ).pack(pady=50)
+        ).pack(pady=100)
+        self.views["reserver"] = reserver_frame
 
         # Vue Afficher
         afficher_frame = ctk.CTkFrame(self.main_container)
-        self.views["afficher"] = afficher_frame
         ctk.CTkLabel(
             afficher_frame,
-            text="Section d'affichage des données\nÀ implémenter",
+            text="Affichage des données - à implémenter",
             font=ctk.CTkFont(size=16),
-        ).pack(pady=50)
+        ).pack(pady=100)
+        self.views["afficher"] = afficher_frame
 
     def show_view(self, view_name):
-        """Gère la navigation entre les vues"""
+        """Affiche une vue et masque les autres"""
         for view in self.views.values():
             view.grid_forget()
         self.views[view_name].grid(row=0, column=0, sticky="nsew")
 
+    # Fonctions de navigation
     def show_accueil(self):
         self.show_view("accueil")
 
-    def show_ajouter(self):
-        self.show_view("ajouter")
+    def show_ajouter_menu(self):
+        self.show_view("ajouter_menu")
+
+    def show_add_client(self):
+        self.show_view("ajouter_client")
+
+    def show_add_room(self):
+        self.show_view("ajouter_salle")
 
     def show_reserver(self):
         self.show_view("reserver")
