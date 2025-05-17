@@ -46,8 +46,4 @@ class ListReservation:
             raise ErrorRoom("Reservation already exists in the list.")
     def __str__(self):
         return f"List of reservations: {self.list_reservation}."
-    def remove_reservation(self, reservation:reservation):
-        if reservation in self.list_reservation:
-            self.list_reservation.remove(reservation)
-        else:
-            raise ErrorRoom("Reservation not found in the list.")
+    
