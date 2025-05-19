@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from ..View.add_client_view import AddClientView
 from ..View.add_room_view import AddRoomView
-from ..Model.database import ListClients
+from ..Model.database import ListClients, Database
+from ..View.reserve_view import ReserveView
 
 
 class MainView(ctk.CTk):
@@ -10,7 +11,7 @@ class MainView(ctk.CTk):
         self.title("MeetingPro - Interface")
         self.geometry("1000x600")
 
-        self.database = ListClients()
+        self.database = Database()
 
         # Apparence
         ctk.set_appearance_mode("System")
@@ -96,11 +97,8 @@ class MainView(ctk.CTk):
 
         # Vue Réserver
         reserver_frame = ctk.CTkFrame(self.main_container)
-        ctk.CTkLabel(
-            reserver_frame,
-            text="Réservation - à implémenter",
-            font=ctk.CTkFont(size=16),
-        ).pack(pady=100)
+        self.reserve_view = ReserveView(reserver_frame, self, self.database)
+        self.reserve_view.pack(fill="both", expand=True)
         self.views["reserver"] = reserver_frame
 
         # Vue Afficher

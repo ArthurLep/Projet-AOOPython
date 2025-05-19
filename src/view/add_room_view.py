@@ -90,7 +90,7 @@ class AddRoomView(ctk.CTkFrame):
 
         try:
             room = Room(room_id, room_type, capacity)
-            self.db.list_room.append(room)
+            self.db.add_room(room)
             messagebox.showinfo("Succès", f"Salle {room.identity} créée")
             self._annuler()
         except ErrorRoom as e:

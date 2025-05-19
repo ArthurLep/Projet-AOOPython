@@ -48,7 +48,7 @@ class AddClientView(ctk.CTkFrame):
 
         try:
             client = Clients(lastname, firstname, email, password)
-            self.db.list_client.append(client)
+            self.db.add_client(client)
             messagebox.showinfo("Succès", f"Client {client.identity} créé")
             self._annuler()
         except ErrorClients as e:

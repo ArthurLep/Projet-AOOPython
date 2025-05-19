@@ -1,9 +1,9 @@
 class ErrorRoom(Exception):
     pass
 
-class Room:
 
-    def __init__(self, Name:str,type:str, capacity:int):
+class Room:
+    def __init__(self, Name: str, type: str, capacity: int):
         self.nom = Name
         self.type = str
         self.capacity = int
@@ -18,4 +18,7 @@ class Room:
             if capacity > 4:
                 raise ErrorRoom("The room is too small.")
         else:
-            raise ErrorRoom("Invalid room type.")     
+            raise ErrorRoom("Invalid room type.")
+
+    def to_dict(self):
+        return {"nom": self.nom, "type": self.type, "capacity": self.capacity}
