@@ -8,7 +8,7 @@
 
 ## 📝 Description du projet
 
-**MeetingPro** est une application de bureau développée en Python avec une interface graphique (Tkinter). Elle permet à une entreprise spécialisée dans la location d’espaces de coworking de gérer efficacement les **réservations de salles** par ses clients.  
+**MeetingPro** est une application de bureau développée en Python avec une interface graphique (Tkinter, CustomTkinter). Elle permet à une entreprise spécialisée dans la location d’espaces de coworking de gérer efficacement les **réservations de salles** par ses clients.  
 L’utilisateur peut ajouter des clients et des salles, consulter les disponibilités et effectuer des réservations dans un système simple et intuitif.  
 Les données sont stockées de manière persistante via un fichier **JSON**, garantissant la sauvegarde automatique des informations.
 
@@ -17,24 +17,27 @@ Les données sont stockées de manière persistante via un fichier **JSON**, gar
 
 ### 🖥️ Interface graphique
 
-L'application démarre avec une **interface de connexion/inscription**, permettant d’accueillir deux types d’utilisateurs :
+L’application est destinée à un usage exclusivement administratif. Elle ne propose pas d’interface utilisateur client ni de système d’inscription ou de connexion.
 
-- **Client** : doit fournir une adresse e-mail et un mot de passe pour accéder à la plateforme de réservation.
-- **Administrateur** : accède à des fonctionnalités de gestion via une interface sécurisée.
+Depuis la page d’accueil, les membres de l’administration peuvent :
 
-L’interface permet aussi de s’enregistrer en tant que **nouvel utilisateur** via une section "signup", en saisissant les informations nécessaires (nom, email, mot de passe…).
+- Visualiser la liste des réservations en cours.
 
-Chaque utilisateur est ensuite redirigé vers une interface spécifique selon son rôle.
+- Créer de nouvelles réservations.
 
-#### 🧑‍💻 Interface Utilisateur
+- Ajouter, modifier ou supprimer des clients.
 
-L'interface client comprend plusieurs fonctionnalités clés :
-- **Visualisation des réservations** en cours.
-- **Création de nouvelles réservations** de salles disponibles.
-- **Annulation de réservations** existantes.
-- **Affichage d'un calendrier interactif** (via `tkcalendar`) dès la page d'accueil, permettant une navigation dans les dates de réservation.
+- Ajouter, modifier ou supprimer des salles.
+
+Un calendrier interactif (via la bibliothèque tkcalendar) facilite la sélection des dates pour les réservations.
+
+#### 🛠️ Gestion des données
+
+- Les données clients, salles et réservations sont gérées via des classes dédiées organisées en modèle
+- La persistance est assurée par des fichiers JSON.
 
 ## 📚 Différentes librairies utilisées 
-- `CustomTkinter` pour une interface plus moderne et réactive. 
-- `Pillow` pour la gestion des images  
+- `CustomTkinter` pour une interface plus moderne et personnalisable. 
+- `Tkinter` : bibliothèque graphique standard de Python
+- `Pillow` pour la gestion et manipulation d'images  
 - `tkcalendar` pour l’intégration du calendrier
