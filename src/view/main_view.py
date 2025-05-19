@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from View.add_client_view import AddClientView
+from View.add_room_view import AddRoomView
 from Model.database import ListClients
 
 
@@ -7,7 +8,6 @@ class MainView(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("MeetingPro - Interface")
-        
         self.geometry("1000x600")
 
         self.database = ListClients()
@@ -90,11 +90,8 @@ class MainView(ctk.CTk):
 
         # Vue Ajouter une salle (à implémenter plus tard)
         ajouter_salle_frame = ctk.CTkFrame(self.main_container)
-        ctk.CTkLabel(
-            ajouter_salle_frame,
-            text="Ajout de salle - à venir",
-            font=ctk.CTkFont(size=16),
-        ).pack(pady=100)
+        self.add_room_view = AddRoomView(ajouter_salle_frame, self.database)
+        self.add_room_view.pack(fill="both", expand=True)
         self.views["ajouter_salle"] = ajouter_salle_frame
 
         # Vue Réserver
