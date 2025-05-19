@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from Model.clients import Clients, ErrorClients
+from src.Model.clients import Clients, ErrorClients
 
 
 class AddClientView(ctk.CTkFrame):

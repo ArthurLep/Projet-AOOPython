@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from View.add_client_view import AddClientView
-from View.add_room_view import AddRoomView
-from Model.database import ListClients
+from ..View.add_client_view import AddClientView
+from ..View.add_room_view import AddRoomView
+from ..Model.database import ListClients
 
 
 class MainView(ctk.CTk):
