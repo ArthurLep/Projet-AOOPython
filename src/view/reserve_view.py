@@ -128,7 +128,7 @@ class ReserveView(ctk.CTkFrame):
             return
 
         type_salle = self.type_var.get() if self.type_var.get() != "Tous" else None
-        salles = self.db.lister_salles_disponibles(debut, fin, type_salle)
+        salles = self.db.list_available_rooms(debut, fin, type_salle)
 
         self.tree.delete(*self.tree.get_children())
         for salle in salles:

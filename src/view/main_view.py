@@ -1,8 +1,9 @@
 import customtkinter as ctk
 from ..View.add_client_view import AddClientView
 from ..View.add_room_view import AddRoomView
-from ..Model.database import ListClients, Database
+from ..Model.database import Database
 from ..View.reserve_view import ReserveView
+from ..View.display_view import DisplayView
 
 
 class MainView(ctk.CTk):
@@ -102,13 +103,10 @@ class MainView(ctk.CTk):
         self.views["reserver"] = reserver_frame
 
         # Vue Afficher
-        afficher_frame = ctk.CTkFrame(self.main_container)
-        ctk.CTkLabel(
-            afficher_frame,
-            text="Affichage des données - à implémenter",
-            font=ctk.CTkFont(size=16),
-        ).pack(pady=100)
-        self.views["afficher"] = afficher_frame
+        display_frame = ctk.CTkFrame(self.main_container)
+        self.display_view = DisplayView(display_frame, self.database)
+        self.display_view.pack(fill="both", expand=True)
+        self.views["afficher"] = display_frame
 
     def show_view(self, view_name):
         """Affiche une vue et masque les autres"""
