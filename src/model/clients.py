@@ -6,7 +6,7 @@ class ErrorClients(Exception):
 
 
 class Clients:
-    def __init__(self, LastName: str, FirstName: str, mail: str, password: str):
+    def __init__(self, LastName: str, FirstName: str, mail: str, password: str = ""):
         self.password = password
         self.LastName = LastName
         self.FirstName = FirstName

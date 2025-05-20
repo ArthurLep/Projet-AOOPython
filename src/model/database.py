@@ -100,7 +100,7 @@ class Database:
         self.list_rooms = ListRoom()
         self.list_reservations = ListReservation()
 
-    def listes_salles_disponibles(self, debut, fin, type_salle=None):
+    def list_available_rooms(self, debut, fin, type_salle=None):
         salles = self.list_rooms.list_room
         if type_salle and type_salle != "Tous":
             salles = [s for s in salles if s.type_room == type_salle]
