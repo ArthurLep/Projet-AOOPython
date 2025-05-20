@@ -86,7 +86,9 @@ class MainView(ctk.CTk):
 
         # Vue Ajouter un client
         ajouter_client_frame = ctk.CTkFrame(self.main_container)
-        self.add_client_view = AddClientView(ajouter_client_frame, self.database)
+        self.add_client_view = AddClientView(
+            ajouter_client_frame, self.database, on_success=self.show_accueil
+        )
         self.add_client_view.pack(fill="both", expand=True)
         self.views["ajouter_client"] = ajouter_client_frame
 

@@ -45,7 +45,7 @@ class AddRoomView(ctk.CTkFrame):
         # Capacité
         self.capacity_label = ctk.CTkLabel(self, text="Capacité :")
         self.capacity_label.grid(row=3, column=0, padx=20, sticky="w")
-        self.capacity_entry = ctk.CTkEntry(self, placeholder_text="Nombre de places")
+        self.capacity_entry = ctk.CTkEntry(self, placeholder_text="Capacité")
         self.capacity_entry.grid(row=3, column=0, padx=20, pady=5, sticky="e")
 
         # Boutons
