@@ -69,22 +69,22 @@ class MainView(ctk.CTk):
         # Vue menu "Ajouter"
         ajouter_menu = ctk.CTkFrame(self.main_container)
         ctk.CTkLabel(
-            ajouter_menu, text="Que souhaitez-vous ajouter ?", font=ctk.CTkFont(size=18)
+            ajouter_menu, text="Que souhaitez-vous ajouter ?", font=ctk.CTkFont(size=30)
         ).pack(pady=40)
 
         btn_client = ctk.CTkButton(
-            ajouter_menu, text="Ajouter un client", command=self.show_add_client
+            ajouter_menu, text="Ajouter un nouveau client", command=self.show_add_client
         )
         btn_client.pack(pady=10)
 
         btn_salle = ctk.CTkButton(
-            ajouter_menu, text="Ajouter une salle", command=self.show_add_room
+            ajouter_menu, text="Ajouter une nouvelle salle", command=self.show_add_room
         )
         btn_salle.pack(pady=10)
 
         self.views["ajouter_menu"] = ajouter_menu
 
-        # Vue Ajouter un client
+        # Add Client View
         ajouter_client_frame = ctk.CTkFrame(self.main_container)
         self.add_client_view = AddClientView(
             ajouter_client_frame, self.database, on_success=self.show_accueil

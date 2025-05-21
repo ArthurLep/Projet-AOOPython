@@ -4,8 +4,9 @@ from src.Model.clients import Clients, ErrorClients
 
 
 class AddClientView(ctk.CTkFrame):
+    """View to add a new client."""
+
     def __init__(self, parent, db, on_success=None):
-        """View to add a new client."""
         super().__init__(parent)
         self.db = db
         self.on_success = on_success
@@ -63,7 +64,7 @@ class AddClientView(ctk.CTkFrame):
         )
         self.validate_btn.pack(side="right", padx=(20, 0), pady=10)
 
-        self.annuler_btn = ctk.CTkButton(
+        self.erase_btn = ctk.CTkButton(
             btn_frame,
             text="Annuler",
             command=self._annuler,
@@ -74,9 +75,10 @@ class AddClientView(ctk.CTkFrame):
             corner_radius=8,
             font=("Helvetica", 18),
         )
-        self.annuler_btn.pack(side="left", padx=(0, 0), pady=10)
+        self.erase_btn.pack(side="left", padx=(0, 0), pady=10)
 
     def _valider(self):
+        """Validate the input fields and add a new client."""
         lastname = self.lastname_entry.get().strip()
         firstname = self.firstname_entry.get().strip()
         email = self.email_entry.get().strip()
@@ -95,6 +97,7 @@ class AddClientView(ctk.CTkFrame):
             messagebox.showerror("Erreur", str(e))
 
     def _annuler(self):
+        """Clear the input fields."""
         self.lastname_entry.delete(0, "end")
         self.firstname_entry.delete(0, "end")
         self.email_entry.delete(0, "end")
