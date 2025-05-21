@@ -12,99 +12,118 @@ class ReserveView(ctk.CTkFrame):
         self.db = db
         self.configure(fg_color="transparent")
 
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(4, weight=1)
+        self.selected_client = None
+        self.start_datetime = None
+        self.end_datetime = None
+        self.selected_room = ("Aucune", "Aucun type")  # Valeur temporaire
 
-        self.create_date_widgets()
-        self.create_client_widgets()
-        self.create_room_filter()
-        self.create_room_table()
-        self.create_buttons()
+        self.step_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.step_frame.pack(fill="both", expand=True)
 
-        self.load_clients()
+        self.show_choose_client_frame()
 
-    def create_date_widgets(self):
-        frame_dates = ctk.CTkFrame(self)
-        frame_dates.grid(row=0, column=0, pady=10, padx=10, sticky="ew")
+    # === ÉTAPE 1 ===
+    def show_choose_client_frame(self):
+        self.clear_step_frame()
+        self.step_client_frame = ctk.CTkFrame(self.step_frame)
+        self.step_client_frame.pack(pady=20, padx=20, fill="both", expand=True)
 
-        ctk.CTkLabel(frame_dates, text="Début :").grid(row=0, column=0, padx=5)
+        date_frame = ctk.CTkFrame(self.step_client_frame, fg_color="transparent")
+        date_frame.pack(pady=10)
+
         self.debut_entry = DateEntry(
-            frame_dates,
-            date_pattern="dd/mm/yyyy",
-            locale="fr_FR",
-            font=ctk.CTkFont(size=12),
+            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR"
         )
-        self.debut_entry.grid(row=0, column=1, padx=5)
+        self.debut_entry.pack(side="left", padx=5)
+        self.start_time = ctk.CTkEntry(date_frame, placeholder_text="HH:MM")
+        self.start_time.pack(side="left", padx=5)
 
-        self.start_time = ctk.CTkEntry(frame_dates, placeholder_text="HH:MM")
-        self.start_time.grid(row=0, column=2, padx=5)
-
-        ctk.CTkLabel(frame_dates, text="Fin :").grid(row=0, column=3, padx=5)
         self.fin_entry = DateEntry(
-            frame_dates,
-            date_pattern="dd/mm/yyyy",
-            locale="fr_FR",
-            font=ctk.CTkFont(size=12),
+            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR"
         )
-        self.fin_entry.grid(row=0, column=4, padx=5)
+        self.fin_entry.pack(side="left", padx=5)
+        self.end_time = ctk.CTkEntry(date_frame, placeholder_text="HH:MM")
+        self.end_time.pack(side="left", padx=5)
 
-        self.end_time = ctk.CTkEntry(frame_dates, placeholder_text="HH:MM")
-        self.end_time.grid(row=0, column=5, padx=5)
-
-    def create_client_widgets(self):
-        frame_client = ctk.CTkFrame(self)
-        frame_client.grid(row=1, column=0, pady=10, padx=10, sticky="ew")
-
-        ctk.CTkLabel(frame_client, text="Client :").grid(row=0, column=0, padx=5)
+        client_frame = ctk.CTkFrame(self.step_client_frame, fg_color="transparent")
+        client_frame.pack(pady=10)
         self.client_var = ctk.StringVar()
         self.client_combobox = ctk.CTkComboBox(
-            frame_client, variable=self.client_var, state="readonly"
+            client_frame, variable=self.client_var, state="readonly", width=300
         )
-        self.client_combobox.grid(row=0, column=1, padx=5, sticky="ew")
-
-    def create_room_filter(self):
-        frame_filter = ctk.CTkFrame(self)
-        frame_filter.grid(row=2, column=0, pady=10, padx=10, sticky="ew")
-
-        ctk.CTkLabel(frame_filter, text="Type de salle :").grid(row=0, column=0, padx=5)
-        self.type_var = ctk.StringVar(value="Tous")
-        self.type_combobox = ctk.CTkComboBox(
-            frame_filter,
-            values=["Tous", "Standard", "Conférence", "Informatique"],
-            variable=self.type_var,
-            command=self.update_rooms,
-        )
-        self.type_combobox.grid(row=0, column=1, padx=5, sticky="ew")
-
-    def create_room_table(self):
-        self.tree = ttk.Treeview(
-            self,
-            columns=("identity", "type_room", "capacity"),
-            show="headings",
-            selectmode="browse",
-        )
-        self.tree.heading("identity", text="ID")
-        self.tree.heading("type_room", text="Type")
-        self.tree.heading("capacity", text="Capacité")
-        self.tree.grid(row=3, column=0, padx=10, pady=10, sticky="nsew")
-
-    def create_buttons(self):
-        frame_buttons = ctk.CTkFrame(self)
-        frame_buttons.grid(row=4, column=0, pady=10, sticky="se")
+        self.client_combobox.pack()
+        self.load_clients()
 
         ctk.CTkButton(
-            frame_buttons,
+            self.step_client_frame, text="Suivant", command=self.choose_client_next
+        ).pack(pady=20)
+
+    def choose_client_next(self):
+        self.selected_client = self.client_combobox.get()
+        self.start_datetime = self.parse_datetime(
+            self.debut_entry, self.start_time.get()
+        )
+        self.end_datetime = self.parse_datetime(self.fin_entry, self.end_time.get())
+
+        if not self.selected_client or not self.start_datetime or not self.end_datetime:
+            self.show_error("Veuillez remplir tous les champs.")
+            return
+        if (self.end_datetime - self.start_datetime) < timedelta(minutes=30):
+            self.show_error("Durée minimale : 30 minutes.")
+            return
+
+        self.show_choose_room_frame()
+
+    # === ÉTAPE 2 ===
+    def show_choose_room_frame(self):
+        self.clear_step_frame()
+        self.step3_frame = ctk.CTkFrame(self.step_frame)
+        self.step3_frame.pack(padx=20, pady=20, fill="both", expand=True)
+
+        ctk.CTkLabel(
+            self.step3_frame,
+            text="Récapitulatif de la réservation",
+            font=ctk.CTkFont(size=20, weight="bold"),
+        ).pack(pady=10)
+
+        ctk.CTkLabel(self.step3_frame, text=f"Client : {self.selected_client}").pack()
+        ctk.CTkLabel(self.step3_frame, text=f"Début : {self.start_datetime}").pack()
+        ctk.CTkLabel(self.step3_frame, text=f"Fin : {self.end_datetime}").pack()
+
+        # Salle temporaire
+        ctk.CTkLabel(
+            self.step3_frame,
+            text=f"Salle : {self.selected_room[0]} - {self.selected_room[1]}",
+        ).pack()
+
+        ctk.CTkButton(
+            self.step3_frame, text="Confirmer", command=self.confirm_reservation
+        ).pack(pady=20)
+
+        ctk.CTkButton(
+            self.step3_frame,
             text="Annuler",
-            fg_color="#FF5555",
+            fg_color="red",
             command=self.controller.show_accueil,
-        ).pack(side="right", padx=5)
+        ).pack()
 
-        ctk.CTkButton(
-            frame_buttons,
-            text="Valider",
-            fg_color="#55FF55",
-            command=self.validate_reservation,
-        ).pack(side="right", padx=5)
+    # === CONFIRMATION ===
+    def confirm_reservation(self):
+        client_id = self.selected_client.split("(")[-1].strip(")")
+        salle_id = self.selected_room[0]
+
+        success = self.db.reserver_salle(
+            client_id, salle_id, self.start_datetime, self.end_datetime
+        )
+        if success:
+            self.controller.show_confirmation()
+        else:
+            self.show_error("La salle n'est plus disponible.")
+
+    # === UTILITAIRES ===
+    def clear_step_frame(self):
+        for widget in self.step_frame.winfo_children():
+            widget.destroy()
 
     def load_clients(self):
         clients = self.db.list_clients.list_client
@@ -115,67 +134,11 @@ class ReserveView(ctk.CTkFrame):
         try:
             time_obj = datetime.strptime(time_str, "%H:%M").time()
             return datetime.combine(date_entry.get_date(), time_obj)
-        except:
+        except Exception:
             return None
 
-    def update_rooms(self, *args):
-        debut = self.parse_datetime(self.debut_entry, self.start_time.get())
-        fin = self.parse_datetime(self.fin_entry, self.end_time.get())
-        if not debut or not fin:
-            return
-        if (fin - debut) < timedelta(minutes=30):
-            self.show_error("Durée minimale : 30 minutes")
-            return
-
-        type_salle = self.type_var.get() if self.type_var.get() != "Tous" else None
-        salles = self.db.list_available_rooms(debut, fin, type_salle)
-
-        self.tree.delete(*self.tree.get_children())
-        for salle in salles:
-            self.tree.insert(
-                "", "end", values=(salle.identity, salle.type_room, salle.capacity)
-            )
-
-    def validate_reservation(self):
-        client_info = self.client_combobox.get()
-        if not client_info:
-            self.show_error("Veuillez sélectionner un client")
-            return
-
-        selected_item = self.tree.selection()
-        if not selected_item:
-            self.show_error("Veuillez sélectionner une salle")
-            return
-
-        client_id = client_info.split("(")[-1].strip(")")
-        salle_id = self.tree.item(selected_item)["values"][0]
-
-        debut = self.parse_datetime(self.debut_entry, self.start_time.get())
-        fin = self.parse_datetime(self.fin_entry, self.end_time.get())
-
-        if not debut or not fin:
-            self.show_error("Format de date/heure invalide")
-            return
-
-        # Demande de confirmation
-        confirm = tk.messagebox.askyesno(
-            "Confirmer la réservation",
-            f"Confirmer la réservation de la salle {salle_id} pour le client {client_id} ?",
-        )
-
-        if not confirm:
-            return
-
-        if self.db.reserver_salle(client_id, salle_id, debut, fin):
-            self.controller.show_confirmation()
-            self.update_rooms()
-        else:
-            self.show_error("La salle n'est plus disponible")
-
     def show_error(self, message):
-        error_window = ctk.CTkToplevel(self)
-        error_window.title("Erreur")
-        ctk.CTkLabel(error_window, text=message).pack(padx=20, pady=10)
-        ctk.CTkButton(error_window, text="OK", command=error_window.destroy).pack(
-            pady=5
-        )
+        err = ctk.CTkToplevel(self)
+        err.title("Erreur")
+        ctk.CTkLabel(err, text=message).pack(padx=20, pady=10)
+        ctk.CTkButton(err, text="OK", command=err.destroy).pack(pady=5)

@@ -66,7 +66,7 @@ class MainView(ctk.CTk):
         ).pack(expand=True)
         self.views["accueil"] = accueil_frame
 
-        # Vue menu "Ajouter"
+        # View "Ajouter" Menu
         ajouter_menu = ctk.CTkFrame(self.main_container)
         ctk.CTkLabel(
             ajouter_menu, text="Que souhaitez-vous ajouter ?", font=ctk.CTkFont(size=30)
@@ -92,19 +92,19 @@ class MainView(ctk.CTk):
         self.add_client_view.pack(fill="both", expand=True)
         self.views["ajouter_client"] = ajouter_client_frame
 
-        # Vue Ajouter une salle (à implémenter plus tard)
+        # Add Room View
         ajouter_salle_frame = ctk.CTkFrame(self.main_container)
         self.add_room_view = AddRoomView(ajouter_salle_frame, self.database)
         self.add_room_view.pack(fill="both", expand=True)
         self.views["ajouter_salle"] = ajouter_salle_frame
 
-        # Vue Réserver
+        # Reserve View
         reserver_frame = ctk.CTkFrame(self.main_container)
         self.reserve_view = ReserveView(reserver_frame, self, self.database)
         self.reserve_view.pack(fill="both", expand=True)
         self.views["reserver"] = reserver_frame
 
-        # Vue Afficher
+        # Display view
         display_frame = ctk.CTkFrame(self.main_container)
         self.display_view = DisplayView(display_frame, self.database)
         self.display_view.pack(fill="both", expand=True)
