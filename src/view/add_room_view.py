@@ -4,6 +4,8 @@ from src.Model.room import Room, ErrorRoom
 
 
 class AddRoomView(ctk.CTkFrame):
+    """View to add a new room."""
+
     def __init__(self, parent, db):
         super().__init__(parent)
         self.db = db
@@ -17,61 +19,94 @@ class AddRoomView(ctk.CTkFrame):
         self.create_widgets()
 
     def create_widgets(self):
-        """Crée les éléments de l'interface"""
-        # Titre
-        ctk.CTkLabel(
+        """Create the widgets for the view"""
+
+        self.title_label = ctk.CTkLabel(
             self,
-            text="Ajouter une nouvelle salle",
-            font=ctk.CTkFont(size=20, weight="bold"),
-        ).grid(row=0, column=0, pady=20)
+            text="Ajouter une nouvelle salle :",
+            font=("Helvetica", 30),
+            text_color="white",
+        )
+        self.title_label.pack(pady=(50, 20))
 
-        # ID Salle
-        self.id_label = ctk.CTkLabel(self, text="ID de la salle :")
-        self.id_label.grid(row=1, column=0, padx=20, sticky="w")
-        self.id_entry = ctk.CTkEntry(self, placeholder_text="Ex: S1, CONF-101...")
-        self.id_entry.grid(row=1, column=0, padx=20, pady=5, sticky="e")
+        self.id_entry = ctk.CTkEntry(
+            self,
+            placeholder_text="Identifiant de la salle",
+            justify="center",
+            width=400,
+            height=50,
+            font=("Helvetica", 20),
+        )
+        self.id_entry.pack(padx=20, pady=20)
 
-        # Type de salle
-        self.type_label = ctk.CTkLabel(self, text="Type de salle :")
-        self.type_label.grid(row=2, column=0, padx=20, sticky="w")
-        self.type_var = ctk.StringVar(value="Standard")
+        capacity_frame = ctk.CTkFrame(self, fg_color="transparent")
+        capacity_frame.pack(pady=20, padx=5)
+
+        self.capacity_label = ctk.CTkLabel(
+            capacity_frame, text="Capacité :", font=("Helvetica", 25)
+        )
+        self.capacity_label.pack(side="left", padx=(0, 10))
+
+        self.capacity_entry = ctk.CTkEntry(
+            capacity_frame,
+            placeholder_text="1",
+            justify="center",
+            width=100,
+            height=50,
+            font=("Helvetica", 20),
+        )
+        self.capacity_entry.pack(side="left")
+
+        type_frame = ctk.CTkFrame(self, fg_color="transparent")
+        type_frame.pack(padx=20, pady=10)
+
+        self.type_var = ctk.StringVar(value="Type de salle")
         self.type_menu = ctk.CTkComboBox(
-            self,
+            type_frame,
             variable=self.type_var,
             values=["Standard", "Conférence", "Informatique"],
+            state="readonly",
+            width=300,
+            height=50,
+            font=("Helvetica", 20),
         )
-        self.type_menu.grid(row=2, column=0, padx=20, pady=5, sticky="e")
-
-        # Capacité
-        self.capacity_label = ctk.CTkLabel(self, text="Capacité :")
-        self.capacity_label.grid(row=3, column=0, padx=20, sticky="w")
-        self.capacity_entry = ctk.CTkEntry(self, placeholder_text="Capacité")
-        self.capacity_entry.grid(row=3, column=0, padx=20, pady=5, sticky="e")
+        self.type_menu.pack(side="left")
 
         # Boutons
-        button_frame = ctk.CTkFrame(self, fg_color="transparent")
-        button_frame.grid(row=4, column=0, pady=20, sticky="se")
+        btn_frame = ctk.CTkFrame(self, fg_color="transparent")
+        btn_frame.pack(pady=100)
 
-        self.valider_btn = ctk.CTkButton(
-            button_frame,
+        btn_frame.grid_columnconfigure(0, weight=1)
+        btn_frame.grid_columnconfigure(1, weight=1)
+
+        self.validate_btn = ctk.CTkButton(
+            btn_frame,
             text="Valider",
             command=self._valider,
-            fg_color="#2ecc71",
-            hover_color="#27ae60",
+            width=100,
+            height=80,
+            fg_color="green",
+            hover_color="lightgreen",
+            corner_radius=8,
+            font=("Helvetica", 18),
         )
-        self.valider_btn.pack(side="right", padx=10)
+        self.validate_btn.pack(side="right", padx=(100, 0), pady=10)
 
-        self.annuler_btn = ctk.CTkButton(
-            button_frame,
+        self.erase_btn = ctk.CTkButton(
+            btn_frame,
             text="Annuler",
             command=self._annuler,
-            fg_color="#e74c3c",
-            hover_color="#c0392b",
+            width=100,
+            height=40,
+            fg_color="red",
+            hover_color="lightcoral",
+            corner_radius=8,
+            font=("Helvetica", 18),
         )
-        self.annuler_btn.pack(side="left", padx=10)
+        self.erase_btn.pack(side="left", padx=(0, 0), pady=10)
 
     def _valider(self):
-        """Valide les informations saisies et ajoute la salle à la base de données"""
+        """Validate the informations entered by the user"""
         room_id = self.id_entry.get().strip()
         room_type = self.type_var.get()
         capacity = self.capacity_entry.get().strip()
@@ -90,14 +125,14 @@ class AddRoomView(ctk.CTkFrame):
 
         try:
             room = Room(room_id, room_type, capacity)
-            self.db.add_room(room)
-            messagebox.showinfo("Succès", f"Salle {room.identity} créée")
+            self.db.list_rooms.add_room(room)
+            messagebox.showinfo("Succès", f"Salle {room.nom} créée")
             self._annuler()
         except ErrorRoom as e:
             messagebox.showerror("Erreur", str(e))
 
     def _annuler(self):
-        """Réinitialise le formulaire"""
+        """Reboot the form"""
         self.id_entry.delete(0, "end")
         self.type_menu.set("Standard")
         self.capacity_entry.delete(0, "end")

@@ -11,13 +11,13 @@ class DisplayView(ctk.CTkFrame):
         self.configure(fg_color="transparent")
 
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
-        # Notebook pour les différents modes d'affichage
+        # Notebook
         self.notebook = ttk.Notebook(self)
         self.notebook.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        # Création des onglets
+        # Tabs creation
         self.create_clients_tab()
         self.create_rooms_tab()
         self.create_reservations_tab()
@@ -25,9 +25,12 @@ class DisplayView(ctk.CTkFrame):
         self.create_availability_tab()
 
     def create_clients_tab(self):
-        """Onglet d'affichage des clients"""
+        """Display client tabs"""
         tab = ctk.CTkFrame(self.notebook)
         self.notebook.add(tab, text="Clients")
+
+        tab.grid_rowconfigure(0, weight=1)
+        tab.grid_columnconfigure(0, weight=1)
 
         # Treeview
         columns = ("ID", "Nom", "Prénom", "Email")
@@ -37,7 +40,7 @@ class DisplayView(ctk.CTkFrame):
 
         for col in columns:
             self.clients_tree.heading(col, text=col)
-            self.clients_tree.column(col, width=150)
+            self.clients_tree.column(col, width=200)
 
         # Scrollbar
         vsb = ttk.Scrollbar(tab, orient="vertical", command=self.clients_tree.yview)
@@ -56,16 +59,19 @@ class DisplayView(ctk.CTkFrame):
         self.load_clients()
 
     def create_rooms_tab(self):
-        """Onglet d'affichage des salles"""
+        """Display rooms tab"""
         tab = ctk.CTkFrame(self.notebook)
         self.notebook.add(tab, text="Salles")
+
+        tab.grid_rowconfigure(0, weight=1)
+        tab.grid_columnconfigure(0, weight=1)
 
         columns = ("ID", "Type", "Capacité")
         self.rooms_tree = ttk.Treeview(tab, columns=columns, show="headings")
 
         for col in columns:
             self.rooms_tree.heading(col, text=col)
-            self.rooms_tree.column(col, width=120)
+            self.rooms_tree.column(col, width=150)
 
         vsb = ttk.Scrollbar(tab, orient="vertical", command=self.rooms_tree.yview)
         self.rooms_tree.configure(yscrollcommand=vsb.set)
@@ -80,8 +86,12 @@ class DisplayView(ctk.CTkFrame):
 
     def create_reservations_tab(self):
         """Onglet d'affichage des réservations par client"""
+
         tab = ctk.CTkFrame(self.notebook)
         self.notebook.add(tab, text="Réservations")
+
+        tab.grid_rowconfigure(0, weight=1)
+        tab.grid_columnconfigure(0, weight=1)
 
         # Contrôles de recherche
         control_frame = ctk.CTkFrame(tab, fg_color="transparent")
@@ -122,6 +132,9 @@ class DisplayView(ctk.CTkFrame):
         tab = ctk.CTkFrame(self.notebook)
         self.notebook.add(tab, text="Disponibilités")
 
+        tab.grid_rowconfigure(0, weight=1)
+        tab.grid_columnconfigure(0, weight=1)
+
         # Contrôles de date
         date_frame = ctk.CTkFrame(tab, fg_color="transparent")
         date_frame.grid(row=0, column=0, pady=10, sticky="ew")
@@ -161,6 +174,9 @@ class DisplayView(ctk.CTkFrame):
         """Onglet d'affichage des réservations par salle"""
         tab = ctk.CTkFrame(self.notebook)
         self.notebook.add(tab, text="Réservations par Salle")
+
+        tab.grid_rowconfigure(0, weight=1)
+        tab.grid_columnconfigure(0, weight=1)
 
         # Contrôles de recherche
         control_frame = ctk.CTkFrame(tab, fg_color="transparent")
@@ -203,7 +219,12 @@ class DisplayView(ctk.CTkFrame):
             self.clients_tree.insert(
                 "",
                 "end",
-                values=(client.id, client.nom, client.prenom, client.email),
+                values=(
+                    client.identity,
+                    client.LastName,
+                    client.FirstName,
+                    client.mail,
+                ),
             )
 
     def load_rooms(self):
@@ -211,13 +232,14 @@ class DisplayView(ctk.CTkFrame):
         self.rooms_tree.delete(*self.rooms_tree.get_children())
         for salle in self.db.list_rooms.list_room:
             self.rooms_tree.insert(
-                "", "end", values=(salle.id, salle.type_room, salle.capacite)
+                "", "end", values=(salle.nom, salle.type, salle.capacity)
             )
 
     def load_clients_list(self):
         """Met à jour la liste déroulante des clients"""
         clients = [
-            f"{c.prenom} {c.nom} ({c.id})" for c in self.db.list_clients.list_client
+            f"{c.FirstName} {c.LastName} ({c.identity})"
+            for c in self.db.list_clients.list_client
         ]
         self.client_search.configure(values=clients)
 
@@ -228,7 +250,7 @@ class DisplayView(ctk.CTkFrame):
             return
 
         client_id = client_info.split("(")[-1].strip(")")
-        reservations = self.db.lister_reservations_client(client_id)
+        reservations = self.db.list_reservations_client(client_id)
 
         self.reservations_tree.delete(*self.reservations_tree.get_children())
 
@@ -252,7 +274,7 @@ class DisplayView(ctk.CTkFrame):
 
     def load_rooms_list(self):
         """Met à jour la liste déroulante des salles"""
-        salles = [f"{s.type_room} ({s.id})" for s in self.db.list_rooms.list_room]
+        salles = [f"{s.type} ({s.nom})" for s in self.db.list_rooms.list_room]
         self.room_search.configure(values=salles)
 
     def load_reservations_by_room(self):
@@ -262,7 +284,7 @@ class DisplayView(ctk.CTkFrame):
             return
 
         room_id = room_info.split("(")[-1].strip(")")
-        reservations = self.db.lister_reservations_salle(room_id)
+        reservations = self.db.list_reservations_salle(room_id)
 
         self.room_reservations_tree.delete(*self.room_reservations_tree.get_children())
 
@@ -293,7 +315,7 @@ class DisplayView(ctk.CTkFrame):
         self.availability_tree.delete(*self.availability_tree.get_children())
         for salle in salles:
             self.availability_tree.insert(
-                "", "end", values=(salle["id"], salle["type"], salle["capacite"])
+                "", "end", values=(salle.nom, salle.type, salle.capacity)
             )
 
     def update_all(self):
