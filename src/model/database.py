@@ -2,7 +2,7 @@ import json
 import os
 from .clients import Clients, ErrorClients
 from .room import Room, ErrorRoom
-from .reservation import Reservation, ErrorReservation
+from .reservation import Reservation
 
 class ListClients:
     def __init__(self):
@@ -82,7 +82,7 @@ class ListReservation:
             self.reservations.append(reservation)
             self.save_to_json()
         else:
-            raise ErrorReservation("Reservation already exists in the list.")
+            raise Exception("Reservation already exists in the list.")
 
     def save_to_json(self):
         data = [r.to_dict() for r in self.reservations]
@@ -103,7 +103,7 @@ class ListReservation:
             self.reservations.remove(reservation)
             self.save_to_json()
         else:
-            raise ErrorReservation("Reservation not found.")
+            raise Exception("Reservation not found.")
 
 class Database:
     def __init__(self):
@@ -117,8 +117,8 @@ class Database:
             salles = [s for s in salles if s.type_room == type_salle]
         available = []
         for salle in salles:
-            if all(not (res.room.nom == salle.nom and
-                        not (fin <= res.debut or debut >= res.fin))
+            # Vérifier qu'aucune réservation ne chevauche la période
+            if all(not (res.room.nom == salle.nom and not (fin <= res.debut or debut >= res.fin))
                    for res in self.list_reservations.reservations):
                 available.append(salle)
         return available
@@ -126,11 +126,16 @@ class Database:
     def reserver_salle(self, client_id, salle_nom, debut, fin):
         client = next((c for c in self.list_clients.clients if c.identity == client_id), None)
         room = next((r for r in self.list_rooms.rooms if r.nom == salle_nom), None)
-        if not client or not room:
-            raise ValueError("Client or room not found.")
-        # vérifier la disponibilité
-        if any(res.room.nom == salle_nom and not (fin <= res.debut or debut >= res.fin) for res in self.list_reservations.reservations):
-            raise ValueError("Room not available in the given period.")
+        if not client:
+            raise ValueError(f"Client with id {client_id} not found.")
+        if not room:
+            raise ValueError(f"Room with name {salle_nom} not found.")
+
+        # Vérifier disponibilité
+        for res in self.list_reservations.reservations:
+            if res.room.nom == salle_nom and not (fin <= res.debut or debut >= res.fin):
+                raise ValueError("Room not available during the requested period.")
+
         reservation = Reservation(client, room, debut, fin)
         self.list_reservations.add_reservation(reservation)
         return reservation
