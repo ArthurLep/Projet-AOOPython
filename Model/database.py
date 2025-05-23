@@ -19,7 +19,7 @@ class ListClients:
             raise ErrorClients("Client not found in the list.")
 
     def __str__(self):
-        return f"Clients: {[str(c) for c in self.list_client]}"
+        return f"List of clients: {[str(client) for client in self.list_client]}"
 
 class ListRoom:
     def __init__(self):
@@ -38,7 +38,7 @@ class ListRoom:
             raise ErrorRoom("Room not found in the list.")
 
     def __str__(self):
-        return f"Rooms: {[str(r) for r in self.list_room]}"
+        return f"List of rooms: {[str(room) for room in self.list_room]}"
 
 class ListReservation:
     def __init__(self):
@@ -54,7 +54,7 @@ class ListReservation:
         if reservation in self.list_reservation:
             self.list_reservation.remove(reservation)
         else:
-            raise ErrorReservation("Reservation not found.")
+            raise ErrorReservation("Reservation not found in the list.")
 
     def __str__(self):
-        return f"Reservations: {[str(r) for r in self.list_reservation]}"
+        return f"List of reservations: {[str(res) for res in self.list_reservation]}"
