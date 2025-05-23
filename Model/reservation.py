@@ -1,17 +1,36 @@
+from .clients import Clients
+from .room import Room
 import uuid
 from datetime import date
-from Model.clients import Clients
-from Model.room import Room
+from datetime import datetime
 
-class ErrorReservation(Exception):
-    pass
 
 class Reservation:
-    def __init__(self, client: Clients, room: Room, start_date: date, end_date: date):
+    def __init__(self, client: Clients, room: Room, date_reservation: date):
+    def __init__(self, client: Clients, room: Room, debut: datetime, fin: datetime):
         self.client = client
         self.room = room
-        self.start_date = start_date
-        self.end_date = end_date
+        self.date_reservation = date_reservation
+        self.debut = debut
+        self.fin = fin
         self.id = str(uuid.uuid4())
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "client_id": self.client.identity,
+            "room_id": self.room.nom,
+            "debut": self.debut.isoformat(),
+            "fin": self.fin.isoformat(),
+        }
+
+    @classmethod
+    def from_dict(cls, data, clients_list, rooms_list):
+        client = next(c for c in clients_list if c.identity == data["client_id"])
+        room = next(r for r in rooms_list if r.nom == data["room_id"])
+        debut = datetime.fromisoformat(data["debut"])
+        fin = datetime.fromisoformat(data["fin"])
+        return cls(client, room, debut, fin)
+
     def __str__(self):
-        return f"Reservation {self.id} for {self.client} in {self.room} from {self.start_date} to {self.end_date}."
+        return f"Reservation {self.id} for {self.client} in {self.room} on {self.date_reservation}."
