@@ -13,6 +13,5 @@ class Reservation:
         self.start_date = start_date
         self.end_date = end_date
         self.id = str(uuid.uuid4())
-
     def __str__(self):
-        return f"Reservation {self.id}: {self.client} in {self.room} from {self.start_date} to {self.end_date}"
+        return f"Reservation {self.id} for {self.client} in {self.room} from {self.start_date} to {self.end_date}."
