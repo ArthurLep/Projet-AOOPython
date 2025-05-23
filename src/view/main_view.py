@@ -3,7 +3,10 @@ from ..View.add_client_view import AddClientView
 from ..View.add_room_view import AddRoomView
 from ..Model.database import Database
 from ..View.reserve_view import ReserveView
-from ..View.display_view import DisplayView
+from ..View.display_list_client import DisplayListClient
+from ..View.display_list_room import DisplayListRoom
+from ..View.display_available_room import DisplayAvailableRoom
+from ..View.display_reservation import DisplayReservation
 
 
 class MainView(ctk.CTk):
@@ -106,12 +109,75 @@ class MainView(ctk.CTk):
 
         # Display view
         display_frame = ctk.CTkFrame(self.main_container)
-        self.display_view = DisplayView(display_frame, self.database)
-        self.display_view.pack(fill="both", expand=True)
+        display_frame.grid_rowconfigure(1, weight=1)
+        display_frame.grid_columnconfigure(0, weight=1)
+
+        buttons_frame = ctk.CTkFrame(display_frame)
+        buttons_frame.grid(row=0, column=0, sticky="ew", pady=10, padx=10)
+
+        content_frame = ctk.CTkFrame(display_frame)
+        content_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        content_frame.grid_rowconfigure(0, weight=1)
+        content_frame.grid_columnconfigure(0, weight=1)
+
+        self.current_display_view = None
+
+        def clear_content():
+            if self.current_display_view:
+                self.current_display_view.pack_forget()
+                self.current_display_view.destroy()
+                self.current_display_view = None
+
+        def show_clients():
+            clear_content()
+            self.current_display_view = DisplayListClient(content_frame, self.database)
+            self.current_display_view.pack(fill="both", expand=True)
+
+        def show_rooms():
+            clear_content()
+            self.current_display_view = DisplayListRoom(content_frame, self.database)
+            self.current_display_view.pack(fill="both", expand=True)
+
+        def show_available_rooms():
+            clear_content()
+            self.current_display_view = DisplayAvailableRoom(
+                content_frame, self.database
+            )
+            self.current_display_view.pack(fill="both", expand=True)
+
+        def show_reservations():
+            clear_content()
+            self.current_display_view = DisplayReservation(content_frame, self.database)
+            self.current_display_view.pack(fill="both", expand=True)
+
+        btn_clients = ctk.CTkButton(
+            buttons_frame, text="Afficher liste client", command=show_clients
+        )
+        btn_salles = ctk.CTkButton(
+            buttons_frame, text="Afficher liste salle", command=show_rooms
+        )
+        btn_salles_dispo = ctk.CTkButton(
+            buttons_frame, text="Afficher salle dispo", command=show_available_rooms
+        )
+        btn_reserv_client = ctk.CTkButton(
+            buttons_frame,
+            text="Afficher réservation par client",
+            command=show_reservations,
+        )
+
+        btn_clients.pack(side="left", padx=5)
+        btn_salles.pack(side="left", padx=5)
+        btn_salles_dispo.pack(side="left", padx=5)
+        btn_reserv_client.pack(side="left", padx=5)
+
+        show_clients()
+        print("Ajout de la vue afficher dans self.views")
         self.views["afficher"] = display_frame
 
     def show_view(self, view_name):
         """Affiche une vue et masque les autres"""
+        print(f"Demande d'affichage de la vue : {view_name}")
+        print(f"Clés dans self.views :", list(self.views.keys()))
         for view in self.views.values():
             view.grid_forget()
         self.views[view_name].grid(row=0, column=0, sticky="nsew")
