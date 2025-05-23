@@ -129,12 +129,12 @@ class TestFonctions(unittest.TestCase):
 
     def test_add_client_to_database(self):
         c = Clients("New", "Client", "newclient@example.com")
-        fonction.add_client_to_database(c, self.clients_db)
+        src.model.base_fonction.add_client_to_database(c, self.clients_db)
         self.assertIn(c, self.clients_db.list_client)
 
     def test_add_room_to_database(self):
         r = Room("NouvelleSalle", "Standard", 4)
-        fonction.add_room_to_database(r, self.rooms_db)
+        src.model.base_fonction.add_room_to_database(r, self.rooms_db)
         self.assertIn(r, self.rooms_db.list_room)
 
     def test_affiche_reservable_room(self):
@@ -142,7 +142,7 @@ class TestFonctions(unittest.TestCase):
         # On simule ici pour éviter erreur
         for room in self.rooms_db.list_room:
             room.is_available = lambda *args, **kwargs: True
-        fonction.affiche_reservable_room(self.rooms_db)
+        src.model.base_fonction.affiche_reservable_room(self.rooms_db)
 
     def test_client_make_and_cancel_reservation(self):
         start = datetime.now()
@@ -151,19 +151,19 @@ class TestFonctions(unittest.TestCase):
         # patch is_available pour autoriser
         self.room.is_available = lambda reservations, start_date, end_date: True
 
-        fonction.client_make_reservation_on_period(self.client, self.room, start, end,
+        src.model.base_fonction.client_make_reservation_on_period(self.client, self.room, start, end,
                                                    self.rooms_db, self.reservations_db)
         self.assertEqual(len(self.reservations_db.list_reservation), 1)
 
         res = self.reservations_db.list_reservation[0]
-        fonction.client_cancel_reservation(self.client, res, self.reservations_db)
+        src.model.base_fonction.client_cancel_reservation(self.client, res, self.reservations_db)
         self.assertEqual(len(self.reservations_db.list_reservation), 0)
 
     def test_supp_client_and_room(self):
-        fonction.supp_client(self.client, self.clients_db)
+        src.model.base_fonction.supp_client(self.client, self.clients_db)
         self.assertNotIn(self.client, self.clients_db.list_client)
 
-        fonction.supp_room(self.room, self.rooms_db)
+        src.model.base_fonction.supp_room(self.room, self.rooms_db)
         self.assertNotIn(self.room, self.rooms_db.list_room)
 
 
