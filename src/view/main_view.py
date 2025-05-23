@@ -200,8 +200,3 @@ class MainView(ctk.CTk):
 
     def show_afficher(self):
         self.show_view("afficher")
-
-
-if __name__ == "__main__":
-    app = MainView()
-    app.mainloop()
