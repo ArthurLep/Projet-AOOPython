@@ -2,11 +2,11 @@ import unittest
 import os
 import json
 from datetime import datetime, timedelta
-from model.clients import Clients, ErrorClients
-from model.room import Room, ErrorRoom
-from model.reservation import Reservation, ErrorReservation
-from model.database import ListClients, ListRoom, ListReservation
-import fonction  # ton fichier fonction.py avec les fonctions métier
+from src.model.clients import Clients, ErrorClients
+from src.model.room import Room, ErrorRoom
+from src.model.reservation import Reservation, ErrorReservation
+from src.model.database import ListClients, ListRoom, ListReservation
+import src.model.base_fonction  # ton fichier fonction.py avec les fonctions métier
 
 
 class TestClients(unittest.TestCase):
