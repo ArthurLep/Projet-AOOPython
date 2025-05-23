@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from Model.clients import Clients, ErrorClients
 from Model.room import Room, ErrorRoom
 from Model.reservation import Reservation, ErrorReservation
-from storage import ListClients, ListRoom, ListReservation
+from Model.storage import ListClients, ListRoom, ListReservation
 
 def test_clients():
     print("=== Test Clients ===")
