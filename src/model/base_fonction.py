@@ -1,7 +1,7 @@
-from Model import database
-from Model.clients import Clients
-from Model.room import Room
-from Model.reservation import Reservation
+from model import database
+from model.clients import Clients
+from model.room import Room
+from model.reservation import Reservation
 from datetime import datetime
 
 def add_client_to_database(client: Clients, clients_db: database.ListClients):
