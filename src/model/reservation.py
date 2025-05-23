@@ -30,7 +30,10 @@ class Reservation:
         return cls(client, room, debut, fin)
 
     def __str__(self):
-        return f"Reservation {self.id} for {self.client} in {self.room} on {self.date_reservation}."
+        # Correction : 'date_reservation' n'existe pas, remplacer par début et fin
+        return (f"Reservation {self.id} for {self.client} "
+                f"in {self.room} from {self.debut.strftime('%Y-%m-%d %H:%M')} "
+                f"to {self.fin.strftime('%Y-%m-%d %H:%M')}.")
 
 
 class ErrorReservation(Exception):
