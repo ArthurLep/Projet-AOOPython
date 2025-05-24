@@ -2,7 +2,7 @@ import json
 import os
 from .clients import Clients, ErrorClients
 from .room import Room, ErrorRoom
-from .reservation import Reservation
+from .reservation import Reservation, ErrorReservation
 
 class ListClients:
     def __init__(self):
@@ -71,32 +71,43 @@ class ListRoom:
             raise ErrorRoom("Room not found in the list.")
 
 class ListReservation:
-    def __init__(self, clients_list: ListClients, rooms_list: ListRoom):
-        self.reservations = []
+    def __init__(self, clients_list, rooms_list, reservation: Reservation = None):
+        self.reservation = reservation
         self.clients_list = clients_list
         self.rooms_list = rooms_list
+        self.list_reservation = []
         self.load_from_json()
 
     def add_reservation(self, reservation: Reservation):
-        if reservation not in self.reservations:
-            self.reservations.append(reservation)
+        if reservation not in self.list_reservation:
+            self.list_reservation.append(reservation)
             self.save_to_json()
         else:
             raise Exception("Reservation already exists in the list.")
 
-    def save_to_json(self):
-        data = [r.to_dict() for r in self.reservations]
-        with open("reservations.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
 
+    def save_to_json(self):
+            data = [res.to_dict() for res in self.list_reservation]
+            with open("reservations.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+            
     def load_from_json(self):
         if os.path.exists("reservations.json"):
             with open("reservations.json", "r", encoding="utf-8") as f:
                 try:
-                    data = json.load(f)
-                    self.reservations = [Reservation.from_dict(d, self.clients_list.clients, self.rooms_list.rooms) for d in data]
-                except json.JSONDecodeError:
-                    self.reservations = []
+                    data = json.load(f)  
+                    self.list_reservation = [
+                        Reservation.from_dict(d, self.clients_list, self.rooms_list)
+                        for d in data
+                    ]
+                except (json.JSONDecodeError, ErrorReservation) as e:
+                    print(f"Erreur lors du chargement des réservations : {e}")
+                    self.list_reservation = []
+        else:
+            self.list_reservation = []
+
+    def __str__(self):
+        return f"List of reservations: {self.list_reservation}."
 
     def remove_reservation(self, reservation: Reservation):
         if reservation in self.reservations:
@@ -109,33 +120,49 @@ class Database:
     def __init__(self):
         self.list_clients = ListClients()
         self.list_rooms = ListRoom()
-        self.list_reservations = ListReservation(self.list_clients, self.list_rooms)
+        self.list_reservations = ListReservation(
+            self.list_clients.list_client, self.list_rooms.list_room
+        )
 
     def list_available_rooms(self, debut, fin, type_salle=None):
         salles = self.list_rooms.rooms
         if type_salle and type_salle != "Tous":
-            salles = [s for s in salles if s.type_room == type_salle]
-        available = []
-        for salle in salles:
-            # Vérifier qu'aucune réservation ne chevauche la période
-            if all(not (res.room.nom == salle.nom and not (fin <= res.debut or debut >= res.fin))
-                   for res in self.list_reservations.reservations):
-                available.append(salle)
-        return available
+            salles = [s for s in salles if s.type == type_salle]
+        return salles
 
-    def reserver_salle(self, client_id, salle_nom, debut, fin):
-        client = next((c for c in self.list_clients.clients if c.identity == client_id), None)
-        room = next((r for r in self.list_rooms.rooms if r.nom == salle_nom), None)
-        if not client:
-            raise ValueError(f"Client with id {client_id} not found.")
-        if not room:
-            raise ValueError(f"Room with name {salle_nom} not found.")
+    def reserver_salle(self, client_id, salle_id, debut, fin):
+        client = next(
+            (c for c in self.list_clients.list_client if c.identity == client_id), None
+        )
+        salle = next((r for r in self.list_rooms.list_room if r.id == salle_id), None)
+        if not client or not salle:
+            return False
 
-        # Vérifier disponibilité
-        for res in self.list_reservations.reservations:
-            if res.room.nom == salle_nom and not (fin <= res.debut or debut >= res.fin):
-                raise ValueError("Room not available during the requested period.")
+        reservation = Reservation(client, salle, debut, fin)
 
-        reservation = Reservation(client, room, debut, fin)
-        self.list_reservations.add_reservation(reservation)
-        return reservation
+        try:
+            self.list_reservations.add_reservation(reservation)
+        except Exception as e:
+            print(f"Erreur lors de l'ajout de réservation : {e}")
+            return False
+
+        return True
+
+    def obtenir_salle_par_id(self, room_id):
+        for room in self.list_rooms.list_room:
+            if room.nom == room_id:
+                return {
+                    "id": room.nom,
+                    "type": room.type,
+                }
+        return None
+
+    def is_room_available(self, room_id, start_datetime, end_datetime):
+        for reservation in self.list_reservations.list_reservation:
+            if reservation.room.id == room_id:
+                if not (
+                    end_datetime <= reservation.debut
+                    or start_datetime >= reservation.fin
+                ):
+                    return False
+        return True
