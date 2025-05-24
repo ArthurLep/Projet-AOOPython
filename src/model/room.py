@@ -40,3 +40,4 @@ class Room:
             "capacity": self.capacity,
             "id": self.id,
         }
+

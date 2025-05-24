@@ -1,25 +1,23 @@
+import json
+import os
 from .clients import Clients, ErrorClients
 from .room import Room, ErrorRoom
 from .reservation import Reservation, ErrorReservation
-import json
-import os
-
 
 class ListClients:
-    def __init__(self, clients: Clients = None):
-        self.clients = clients
-        self.list_client = []
+    def __init__(self):
+        self.clients = []
         self.load_from_json()
 
     def add_client(self, client: Clients):
-        if client not in self.list_client:
-            self.list_client.append(client)
+        if client not in self.clients:
+            self.clients.append(client)
             self.save_to_json()
         else:
             raise ErrorClients("Client already exists in the list.")
 
     def save_to_json(self):
-        data = [client.to_dict() for client in self.list_client]
+        data = [c.to_dict() for c in self.clients]
         with open("users.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
@@ -28,35 +26,31 @@ class ListClients:
             with open("users.json", "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
-                    self.list_client = [Clients.from_dict(d) for d in data]
+                    self.clients = [Clients.from_dict(d) for d in data]
                 except json.JSONDecodeError:
-                    self.list_client = []
-
-    def __str__(self):
-        return f"List of clients: {self.list_client}."
+                    self.clients = []
 
     def remove_client(self, client: Clients):
-        if client in self.list_client:
-            self.list_client.remove(client)
+        if client in self.clients:
+            self.clients.remove(client)
+            self.save_to_json()
         else:
             raise ErrorClients("Client not found in the list.")
 
-
 class ListRoom:
-    def __init__(self, room: Room = None):
-        self.room = room
-        self.list_room = []
+    def __init__(self):
+        self.rooms = []
         self.load_from_json()
 
     def add_room(self, room: Room):
-        if room not in self.list_room:
-            self.list_room.append(room)
+        if room not in self.rooms:
+            self.rooms.append(room)
             self.save_to_json()
         else:
             raise ErrorRoom("Room already exists in the list.")
 
     def save_to_json(self):
-        data = [room.to_dict() for room in self.list_room]
+        data = [r.to_dict() for r in self.rooms]
         with open("rooms.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
@@ -65,19 +59,16 @@ class ListRoom:
             with open("rooms.json", "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
-                    self.list_room = [Room.from_dict(d) for d in data]
+                    self.rooms = [Room.from_dict(d) for d in data]
                 except json.JSONDecodeError:
-                    self.list_room = []
-
-    def __str__(self):
-        return f"List of rooms: {self.list_room}."
+                    self.rooms = []
 
     def remove_room(self, room: Room):
-        if room in self.list_room:
-            self.list_room.remove(room)
+        if room in self.rooms:
+            self.rooms.remove(room)
+            self.save_to_json()
         else:
             raise ErrorRoom("Room not found in the list.")
-
 
 class ListReservation:
     def __init__(self, clients_list, rooms_list, reservation: Reservation = None):
@@ -92,18 +83,19 @@ class ListReservation:
             self.list_reservation.append(reservation)
             self.save_to_json()
         else:
-            raise ErrorRoom("Reservation already exists in the list.")
+            raise Exception("Reservation already exists in the list.")
+
 
     def save_to_json(self):
-        data = [res.to_dict() for res in self.list_reservation]
-        with open("reservations.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
-
+            data = [res.to_dict() for res in self.list_reservation]
+            with open("reservations.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+            
     def load_from_json(self):
         if os.path.exists("reservations.json"):
             with open("reservations.json", "r", encoding="utf-8") as f:
                 try:
-                    data = json.load(f)  # data est une liste de dict
+                    data = json.load(f)  
                     self.list_reservation = [
                         Reservation.from_dict(d, self.clients_list, self.rooms_list)
                         for d in data
@@ -117,6 +109,12 @@ class ListReservation:
     def __str__(self):
         return f"List of reservations: {self.list_reservation}."
 
+    def remove_reservation(self, reservation: Reservation):
+        if reservation in self.reservations:
+            self.reservations.remove(reservation)
+            self.save_to_json()
+        else:
+            raise Exception("Reservation not found.")
 
 class Database:
     def __init__(self):
@@ -127,7 +125,7 @@ class Database:
         )
 
     def list_available_rooms(self, debut, fin, type_salle=None):
-        salles = self.list_rooms.list_room
+        salles = self.list_rooms.rooms
         if type_salle and type_salle != "Tous":
             salles = [s for s in salles if s.type == type_salle]
         return salles

@@ -1,9 +1,7 @@
 import uuid
 
-
 class ErrorClients(Exception):
     pass
-
 
 class Clients:
     def __init__(
@@ -35,10 +33,11 @@ class Clients:
             LastName=data["nom"],
             FirstName=data["prenom"],
             mail=data["mail"],
-            password=data["password"],
+            password=data.get("password", ""),
+            identity=data.get("identity")  # restaurer l'identity
         )
         client.identity = data["identity"]
         return client
 
     def __str__(self):
-        return f"Client {self.LastName} {self.FirstName} with mail {self.mail} and is number is {self.identity}."
+        return f"Client {self.LastName} {self.FirstName} with mail {self.mail} and id {self.identity}."

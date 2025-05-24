@@ -40,6 +40,5 @@ class Reservation:
         reservation.id = data.get("id")  # Restaurer l’id de la réservation
         return reservation
 
-
 class ErrorReservation(Exception):
     pass
