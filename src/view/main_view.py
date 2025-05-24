@@ -171,13 +171,10 @@ class MainView(ctk.CTk):
         btn_reserv_client.pack(side="left", padx=5)
 
         show_clients()
-        print("Ajout de la vue afficher dans self.views")
         self.views["afficher"] = display_frame
 
     def show_view(self, view_name):
         """Affiche une vue et masque les autres"""
-        print(f"Demande d'affichage de la vue : {view_name}")
-        print(f"Clés dans self.views :", list(self.views.keys()))
         for view in self.views.values():
             view.grid_forget()
         self.views[view_name].grid(row=0, column=0, sticky="nsew")
@@ -196,7 +193,25 @@ class MainView(ctk.CTk):
         self.show_view("ajouter_salle")
 
     def show_reserver(self):
+        self.reserve_view.reset()
         self.show_view("reserver")
 
     def show_afficher(self):
         self.show_view("afficher")
+
+    def show_confirmation(self):
+        confirmation_window = ctk.CTkToplevel(self)
+        confirmation_window.title("Confirmation de réservation")
+        confirmation_window.geometry("300x150")
+
+        label = ctk.CTkLabel(
+            confirmation_window,
+            text="Réservation confirmée !",
+            font=ctk.CTkFont(size=18, weight="bold"),
+        )
+        label.pack(pady=30)
+
+        btn_ok = ctk.CTkButton(
+            confirmation_window, text="OK", command=confirmation_window.destroy
+        )
+        btn_ok.pack(pady=10)

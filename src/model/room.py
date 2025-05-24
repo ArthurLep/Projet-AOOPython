@@ -1,3 +1,6 @@
+import uuid
+
+
 class ErrorRoom(Exception):
     pass
 
@@ -7,6 +10,7 @@ class Room:
         self.nom = Name
         self.capacity = capacity
         self.type = type
+        self.id = str(uuid.uuid4())
         if type == "Informatique":
             if capacity < 1 or capacity > 4:
                 raise ErrorRoom("The room is too small.")
@@ -21,11 +25,18 @@ class Room:
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(
+        room = cls(
             Name=data.get("nom"),
             type=data.get("type"),
             capacity=data.get("capacity"),
         )
+        room.id = data.get("id")
+        return room
 
     def to_dict(self):
-        return {"nom": self.nom, "type": self.type, "capacity": self.capacity}
+        return {
+            "nom": self.nom,
+            "type": self.type,
+            "capacity": self.capacity,
+            "id": self.id,
+        }
