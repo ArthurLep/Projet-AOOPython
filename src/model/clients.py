@@ -4,12 +4,19 @@ class ErrorClients(Exception):
     pass
 
 class Clients:
-    def __init__(self, LastName: str, FirstName: str, mail: str, password: str = "", identity: str = None):
+    def __init__(
+        self,
+        LastName: str,
+        FirstName: str,
+        mail: str,
+        password: str = "",
+        identity: str = None,
+    ):
         self.password = password
         self.LastName = LastName
         self.FirstName = FirstName
         self.mail = mail
-        self.identity = identity if identity is not None else str(uuid.uuid4())
+        self.identity = identity if identity else str(uuid.uuid4())
 
     def to_dict(self):
         return {
@@ -22,13 +29,15 @@ class Clients:
 
     @classmethod
     def from_dict(cls, data):
-        return cls(
+        client = cls(
             LastName=data["nom"],
             FirstName=data["prenom"],
             mail=data["mail"],
             password=data.get("password", ""),
             identity=data.get("identity")  # restaurer l'identity
         )
+        client.identity = data["identity"]
+        return client
 
     def __str__(self):
         return f"Client {self.LastName} {self.FirstName} with mail {self.mail} and id {self.identity}."

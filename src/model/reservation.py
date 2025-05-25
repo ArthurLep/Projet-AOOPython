@@ -5,12 +5,19 @@ from datetime import datetime
 
 
 class Reservation:
-    def __init__(self, client: Clients, room: Room, debut: datetime, fin: datetime):
+    def __init__(
+        self,
+        client: Clients,
+        room: Room,
+        debut: datetime,
+        fin: datetime,
+        id: str = str(uuid.uuid4()),
+    ):
         self.client = client
         self.room = room
         self.debut = debut
         self.fin = fin
-        self.id = str(uuid.uuid4())
+        self.id = id if id else str(uuid.uuid4())
 
     def to_dict(self):
         return {
@@ -19,6 +26,7 @@ class Reservation:
             "room_id": self.room.nom,
             "debut": self.debut.isoformat(),
             "fin": self.fin.isoformat(),
+            "id": self.id,
         }
 
     @classmethod
@@ -27,14 +35,10 @@ class Reservation:
         room = next(r for r in rooms_list if r.nom == data["room_id"])
         debut = datetime.fromisoformat(data["debut"])
         fin = datetime.fromisoformat(data["fin"])
-        return cls(client, room, debut, fin)
 
-    def __str__(self):
-        # Correction : 'date_reservation' n'existe pas, remplacer par début et fin
-        return (f"Reservation {self.id} for {self.client} "
-                f"in {self.room} from {self.debut.strftime('%Y-%m-%d %H:%M')} "
-                f"to {self.fin.strftime('%Y-%m-%d %H:%M')}.")
-
+        reservation = cls(client, room, debut, fin)
+        reservation.id = data.get("id")  # Restaurer l’id de la réservation
+        return reservation
 
 class ErrorReservation(Exception):
     pass
