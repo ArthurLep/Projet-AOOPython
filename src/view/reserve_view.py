@@ -150,7 +150,7 @@ class ReserveView(ctk.CTkFrame):
             widget.destroy()
 
     def load_clients(self):
-        clients = self.db.list_clients.list_client
+        clients = self.db.list_clients.clients
         client_list = [f"{c.FirstName} {c.LastName} ({c.identity})" for c in clients]
         self.client_combobox.configure(values=client_list)
 

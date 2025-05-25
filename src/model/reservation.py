@@ -1,5 +1,5 @@
-from .clients import Clients
-from .room import Room
+from src.Model.clients import Clients
+from src.Model.room import Room
 import uuid
 from datetime import datetime
 
@@ -39,6 +39,7 @@ class Reservation:
         reservation = cls(client, room, debut, fin)
         reservation.id = data.get("id")  # Restaurer l’id de la réservation
         return reservation
+
 
 class ErrorReservation(Exception):
     pass

@@ -1,8 +1,9 @@
 import json
 import os
-from .clients import Clients, ErrorClients
-from .room import Room, ErrorRoom
-from .reservation import Reservation, ErrorReservation
+from src.Model.clients import Clients, ErrorClients
+from src.Model.room import Room, ErrorRoom
+from src.Model.reservation import Reservation, ErrorReservation
+
 
 class ListClients:
     def __init__(self):
@@ -37,6 +38,7 @@ class ListClients:
         else:
             raise ErrorClients("Client not found in the list.")
 
+
 class ListRoom:
     def __init__(self):
         self.rooms = []
@@ -70,6 +72,7 @@ class ListRoom:
         else:
             raise ErrorRoom("Room not found in the list.")
 
+
 class ListReservation:
     def __init__(self, clients_list, rooms_list, reservation: Reservation = None):
         self.reservation = reservation
@@ -85,17 +88,16 @@ class ListReservation:
         else:
             raise Exception("Reservation already exists in the list.")
 
-
     def save_to_json(self):
-            data = [res.to_dict() for res in self.list_reservation]
-            with open("reservations.json", "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4)
-            
+        data = [res.to_dict() for res in self.list_reservation]
+        with open("reservations.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+
     def load_from_json(self):
         if os.path.exists("reservations.json"):
             with open("reservations.json", "r", encoding="utf-8") as f:
                 try:
-                    data = json.load(f)  
+                    data = json.load(f)
                     self.list_reservation = [
                         Reservation.from_dict(d, self.clients_list, self.rooms_list)
                         for d in data
@@ -116,12 +118,13 @@ class ListReservation:
         else:
             raise Exception("Reservation not found.")
 
+
 class Database:
     def __init__(self):
         self.list_clients = ListClients()
         self.list_rooms = ListRoom()
         self.list_reservations = ListReservation(
-            self.list_clients.list_client, self.list_rooms.list_room
+            self.list_clients.clients, self.list_rooms.rooms
         )
 
     def list_available_rooms(self, debut, fin, type_salle=None):
@@ -132,9 +135,9 @@ class Database:
 
     def reserver_salle(self, client_id, salle_id, debut, fin):
         client = next(
-            (c for c in self.list_clients.list_client if c.identity == client_id), None
+            (c for c in self.list_clients.clients if c.identity == client_id), None
         )
-        salle = next((r for r in self.list_rooms.list_room if r.id == salle_id), None)
+        salle = next((r for r in self.list_rooms.rooms if r.id == salle_id), None)
         if not client or not salle:
             return False
 
@@ -149,7 +152,7 @@ class Database:
         return True
 
     def obtenir_salle_par_id(self, room_id):
-        for room in self.list_rooms.list_room:
+        for room in self.list_rooms.rooms:
             if room.nom == room_id:
                 return {
                     "id": room.nom,
