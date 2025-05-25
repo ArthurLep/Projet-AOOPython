@@ -1,12 +1,12 @@
 import customtkinter as ctk
-from ..View.add_client_view import AddClientView
-from ..View.add_room_view import AddRoomView
-from ..Model.database import Database
-from ..View.reserve_view import ReserveView
-from ..View.display_list_client import DisplayListClient
-from ..View.display_list_room import DisplayListRoom
-from ..View.display_available_room import DisplayAvailableRoom
-from ..View.display_reservation import DisplayReservation
+from .add_client_view import AddClientView
+from ..view.add_room_view import AddRoomView
+from ..model.database import Database
+from ..view.reserve_view import ReserveView
+from ..view.display_list_client import DisplayListClient
+from ..view.display_list_room import DisplayListRoom
+from ..view.display_available_room import DisplayAvailableRoom
+from ..view.display_reservation import DisplayReservation
 
 
 class MainView(ctk.CTk):
