@@ -42,7 +42,7 @@ class DisplayListRoom(ctk.CTkFrame):
     def load_rooms(self):
         """Charge la liste des salles dans le tableau"""
         self.rooms_tree.delete(*self.rooms_tree.get_children())
-        for salle in self.db.list_rooms.list_room:
+        for salle in self.db.list_rooms.rooms:
             self.rooms_tree.insert(
                 "", "end", values=(salle.nom, salle.type, salle.capacity)
             )
@@ -50,5 +50,5 @@ class DisplayListRoom(ctk.CTkFrame):
     def load_rooms_list(self):
         """Met à jour la liste déroulante des salles (si utilisée ailleurs)"""
         if self.room_search:
-            salles = [f"{s.type} ({s.nom})" for s in self.db.list_rooms.list_room]
+            salles = [f"{s.type} ({s.nom})" for s in self.db.list_rooms.rooms]
             self.room_search.configure(values=salles)

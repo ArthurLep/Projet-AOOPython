@@ -61,7 +61,7 @@ class DisplayReservation(ctk.CTkFrame):
         """Remplit la liste déroulante des clients"""
         clients = [
             f"{c.FirstName} {c.LastName} ({c.identity})"
-            for c in self.db.list_clients.list_client
+            for c in self.db.list_clients.clients
         ]
         self.client_search.configure(values=clients)
 

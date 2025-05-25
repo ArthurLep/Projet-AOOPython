@@ -51,7 +51,7 @@ class DisplayListClient(ctk.CTkFrame):
     def load_clients(self):
         """Charge la liste des clients dans le treeview"""
         self.clients_tree.delete(*self.clients_tree.get_children())
-        for client in self.db.list_clients.list_client:
+        for client in self.db.list_clients.clients:
             self.clients_tree.insert(
                 "",
                 "end",
