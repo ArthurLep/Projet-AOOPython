@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from src.Model.room import Room, ErrorRoom
+from src.model.room import Room, ErrorRoom
 
 
 class AddRoomView(ctk.CTkFrame):
