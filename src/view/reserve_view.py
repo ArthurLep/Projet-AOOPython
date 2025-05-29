@@ -10,6 +10,14 @@ class ReserveView(ctk.CTkFrame):
         self.db = db
         self.configure(fg_color="transparent")
 
+        self.title_label = ctk.CTkLabel(
+            self,
+            text="Reserver une salle :",
+            font=("Helvetica", 30),
+            text_color="white",
+        )
+        self.title_label.pack(pady=(50, 20))
+
         self.selected_client = None
         self.start_datetime = None
         self.end_datetime = None
@@ -23,45 +31,90 @@ class ReserveView(ctk.CTkFrame):
     # === ÉTAPE 1 ===
     def show_choose_client_frame(self):
         self.clear_step_frame()
-        self.step_client_frame = ctk.CTkFrame(self.step_frame)
+        self.step_client_frame = ctk.CTkFrame(self.step_frame, fg_color="transparent")
         self.step_client_frame.pack(pady=20, padx=20, fill="both", expand=True)
 
         date_frame = ctk.CTkFrame(self.step_client_frame, fg_color="transparent")
-        date_frame.pack(pady=10)
+        date_frame.pack(pady=10, fill="x")
 
-        self.debut_entry = DateEntry(
-            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR"
+        start_frame = ctk.CTkFrame(date_frame, fg_color="transparent")
+        start_frame.pack(pady=5, fill="x")
+        start_label = ctk.CTkLabel(
+            start_frame, text="Début :", width=80, anchor="w", font=("Helvetica", 20)
         )
-        self.debut_entry.pack(side="left", padx=5)
-        self.start_time = ctk.CTkEntry(date_frame, placeholder_text="HH:MM")
-        self.start_time.pack(side="left", padx=5)
+        start_label.pack(side="left", padx=50)
+        self.start_entry = DateEntry(
+            start_frame,
+            date_pattern="dd/mm/yyyy",
+            locale="fr_FR",
+            width=20,
+            font=("Helvetica", 15),
+        )
+        self.start_entry.pack(side="left", padx=5)
+        self.start_time = ctk.CTkEntry(
+            start_frame,
+            placeholder_text="HH:MM",
+            justify="center",
+            font=("Helvetica", 12),
+            width=500,
+        )
+        self.start_time.pack(side="left", padx=15)
 
-        self.fin_entry = DateEntry(
-            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR"
+        end_frame = ctk.CTkFrame(date_frame, fg_color="transparent")
+        end_frame.pack(pady=5, fill="x")
+        end_label = ctk.CTkLabel(
+            end_frame, text="Fin :", width=80, anchor="w", font=("Helvetica", 20)
         )
-        self.fin_entry.pack(side="left", padx=5)
-        self.end_time = ctk.CTkEntry(date_frame, placeholder_text="HH:MM")
-        self.end_time.pack(side="left", padx=5)
+        end_label.pack(side="left", padx=50)
+        self.end_entry = DateEntry(
+            end_frame,
+            date_pattern="dd/mm/yyyy",
+            locale="fr_FR",
+            width=20,
+            font=("Helvetica", 15),
+        )
+        self.end_entry.pack(side="left", padx=5)
+        self.end_time = ctk.CTkEntry(
+            end_frame,
+            placeholder_text="HH:MM",
+            justify="center",
+            font=("Helvetica", 12),
+            width=500,
+        )
+        self.end_time.pack(side="left", padx=15)
 
         client_frame = ctk.CTkFrame(self.step_client_frame, fg_color="transparent")
-        client_frame.pack(pady=10)
+        client_frame.pack(pady=5, fill="x")
+        client_label = ctk.CTkLabel(
+            client_frame, text="Client :", width=80, anchor="w", font=("Helvetica", 20)
+        )
+        client_label.pack(side="left", padx=50)
         self.client_var = ctk.StringVar()
         self.client_combobox = ctk.CTkComboBox(
-            client_frame, variable=self.client_var, state="readonly", width=300
+            client_frame, variable=self.client_var, state="readonly", width=500
         )
         self.client_combobox.pack()
         self.load_clients()
 
-        ctk.CTkButton(
-            self.step_client_frame, text="Suivant", command=self.choose_client_next
-        ).pack(pady=20)
+        self.validate_btn = ctk.CTkButton(
+            self.step_client_frame,
+            text="Valider",
+            command=self.choose_client_next,
+            width=200,
+            height=50,
+            fg_color="green",
+            hover_color="lightgreen",
+            corner_radius=8,
+            font=("Helvetica", 18),
+        )
+        self.validate_btn.pack(side="left", padx=(300, 0), pady=10)
 
     def choose_client_next(self):
         self.selected_client = self.client_combobox.get()
         self.start_datetime = self.parse_datetime(
-            self.debut_entry, self.start_time.get()
+            self.start_entry, self.start_time.get()
         )
-        self.end_datetime = self.parse_datetime(self.fin_entry, self.end_time.get())
+        self.end_datetime = self.parse_datetime(self.end_entry, self.end_time.get())
 
         if not self.selected_client or not self.start_datetime or not self.end_datetime:
             self.show_error("Veuillez remplir tous les champs.")
@@ -75,7 +128,7 @@ class ReserveView(ctk.CTkFrame):
     # === ÉTAPE 2 ===
     def show_choose_room_frame(self):
         self.clear_step_frame()
-        self.step_room_frame = ctk.CTkFrame(self.step_frame)
+        self.step_room_frame = ctk.CTkFrame(self.step_frame, fg_color="transparent")
         self.step_room_frame.pack(padx=20, pady=20, fill="both", expand=True)
 
         ctk.CTkLabel(
@@ -178,7 +231,7 @@ class ReserveView(ctk.CTkFrame):
 
     def show_summary_frame(self):
         self.clear_step_frame()
-        self.step_summary_frame = ctk.CTkFrame(self.step_frame)
+        self.step_summary_frame = ctk.CTkFrame(self.step_frame, fg_color="transparent")
         self.step_summary_frame.pack(padx=20, pady=20, fill="both", expand=True)
 
         ctk.CTkLabel(

@@ -34,7 +34,9 @@ class DisplayListRoom(ctk.CTkFrame):
         self.rooms_tree.grid(row=0, column=0, sticky="nsew")
         vsb.grid(row=0, column=1, sticky="ns")
 
-        refresh_btn = ctk.CTkButton(tab, text="🔄 Actualiser", command=self.load_rooms)
+        refresh_btn = ctk.CTkButton(
+            tab, text="🔄 Actualiser", command=self.load_rooms, width=100
+        )
         refresh_btn.grid(row=1, column=0, pady=5)
 
         self.load_rooms()

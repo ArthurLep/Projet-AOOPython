@@ -128,10 +128,28 @@ class Database:
         )
 
     def list_available_rooms(self, debut, fin, type_salle=None):
-        salles = self.list_rooms.rooms
-        if type_salle and type_salle != "Tous":
-            salles = [s for s in salles if s.type == type_salle]
-        return salles
+        salles_disponibles = []
+
+        for salle in self.list_rooms.rooms:
+            if type_salle and type_salle != "Tous" and salle.type != type_salle:
+                continue
+
+            reservations = [
+                r
+                for r in (self.list_reservations.reservation or [])
+                if r.room.nom == salle.id
+            ]
+
+            conflit = False
+            for r in reservations:
+                if not (fin <= r.debut or debut >= r.fin):
+                    conflit = True
+                    break
+
+            if not conflit:
+                salles_disponibles.append(salle)
+
+        return salles_disponibles
 
     def reserver_salle(self, client_id, salle_id, debut, fin):
         client = next(
