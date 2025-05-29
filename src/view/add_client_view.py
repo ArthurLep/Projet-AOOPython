@@ -55,21 +55,21 @@ class AddClientView(ctk.CTkFrame):
             btn_frame,
             text="Valider",
             command=self._valider,
-            width=100,
-            height=40,
+            width=200,
+            height=50,
             fg_color="green",
             hover_color="lightgreen",
             corner_radius=8,
             font=("Helvetica", 18),
         )
-        self.validate_btn.pack(side="right", padx=(20, 0), pady=10)
+        self.validate_btn.pack(side="right", padx=(100, 0), pady=10)
 
         self.erase_btn = ctk.CTkButton(
             btn_frame,
             text="Annuler",
             command=self._annuler,
-            width=100,
-            height=40,
+            width=200,
+            height=50,
             fg_color="red",
             hover_color="lightcoral",
             corner_radius=8,

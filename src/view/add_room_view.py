@@ -74,17 +74,14 @@ class AddRoomView(ctk.CTkFrame):
 
         # Boutons
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
-        btn_frame.pack(pady=100)
-
-        btn_frame.grid_columnconfigure(0, weight=1)
-        btn_frame.grid_columnconfigure(1, weight=1)
+        btn_frame.pack(pady=50)
 
         self.validate_btn = ctk.CTkButton(
             btn_frame,
             text="Valider",
             command=self._valider,
-            width=100,
-            height=80,
+            width=200,
+            height=50,
             fg_color="green",
             hover_color="lightgreen",
             corner_radius=8,
@@ -96,8 +93,8 @@ class AddRoomView(ctk.CTkFrame):
             btn_frame,
             text="Annuler",
             command=self._annuler,
-            width=100,
-            height=40,
+            width=200,
+            height=50,
             fg_color="red",
             hover_color="lightcoral",
             corner_radius=8,
