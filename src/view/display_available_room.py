@@ -64,7 +64,7 @@ class DisplayAvailableRoom(ctk.CTkFrame):
         debut = datetime.combine(self.start_date.get_date(), datetime.min.time())
         fin = datetime.combine(self.end_date.get_date(), datetime.min.time())
 
-        salles = self.db.list_available_rooms(debut, fin)
+        salles = self.db.list_available_rooms_on_period(debut, fin)
 
         self.availability_tree.delete(*self.availability_tree.get_children())
         for salle in salles:
