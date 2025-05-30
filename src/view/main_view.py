@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from ..view.add_client_view import AddClientView
-from ..view.display_view import DisplayView
 from ..view.add_room_view import AddRoomView
 from ..model.database import Database
 from ..view.reserve_view import ReserveView

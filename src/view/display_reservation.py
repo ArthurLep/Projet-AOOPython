@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
 
-from src.Model.reservation import Reservation
+from src.model.reservation import Reservation
 
 
 class DisplayReservation(ctk.CTkFrame):
