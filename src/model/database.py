@@ -1,8 +1,8 @@
 import json
 import os
-from src.Model.clients import Clients, ErrorClients
-from src.Model.room import Room, ErrorRoom
-from src.Model.reservation import Reservation, ErrorReservation
+from src.model.clients import Clients, ErrorClients
+from src.model.room import Room, ErrorRoom
+from src.model.reservation import Reservation, ErrorReservation
 
 
 class ListClients:
