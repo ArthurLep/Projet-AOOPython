@@ -1,5 +1,5 @@
-from src.Model.clients import Clients
-from src.Model.room import Room
+from src.model.clients import Clients
+from src.model.room import Room
 import uuid
 from datetime import datetime
 
