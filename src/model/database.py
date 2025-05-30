@@ -130,8 +130,9 @@ class Database:
     def list_available_rooms_on_period(self, debut, fin, type_salle=None):
         available_rooms = []
         for room in self.list_rooms.rooms:
-            if room.is_available(self.list_reservations.list_reservation, debut, fin):
-                if type_salle is None or room.type == type_salle:
+            if type_salle and room.type != type_salle and room.type != "Tous":
+                continue
+            if self.is_room_available(room.id, debut, fin):
                     available_rooms.append(room)
         return available_rooms
 
@@ -163,16 +164,12 @@ class Database:
                 }
         return None
 
-    def is_room_available(self, room_id, start_date, end_date):
-        room = next((r for r in self.list_rooms.rooms if r.nom == room_id), None)
-        if not room:
-            return False
-
+    def is_room_available(self, room_id, start_datetime, end_datetime):
         for reservation in self.list_reservations.list_reservation:
-            if (
-                reservation.room.nom == room_id
-                and not (end_date <= reservation.debut or start_date >= reservation.fin)
-            ):
-                return False
+            if reservation.room.id == room_id:
+                if not (
+                    end_datetime <= reservation.debut
+                    or start_datetime >= reservation.fin
+                ):
+                    return False
         return True
-    
