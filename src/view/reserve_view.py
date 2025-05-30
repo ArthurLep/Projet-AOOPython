@@ -137,7 +137,7 @@ class ReserveView(ctk.CTkFrame):
             font=ctk.CTkFont(size=20, weight="bold"),
         ).pack(pady=10)
 
-        salles_dispo = self.db.list_available_rooms(
+        salles_dispo = self.db.list_available_rooms_on_period(
             self.start_datetime, self.end_datetime
         )
 
