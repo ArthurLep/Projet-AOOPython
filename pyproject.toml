@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "BSD-3-Clause" }
 classifiers = ["Programming Language :: Python :: 3"]
-dependencies = ["pytest", "tkcalendar", "customtkinter"]
+dependencies = ["pytest", "tkinter", "customtkinter"]
 
 [project.urls]
 repository = ""

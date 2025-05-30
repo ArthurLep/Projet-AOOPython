@@ -28,9 +28,9 @@ class DisplayReservation(ctk.CTkFrame):
         control_frame = ctk.CTkFrame(tab, fg_color="transparent")
         control_frame.grid(row=0, column=0, pady=10, sticky="ew")
 
-        ctk.CTkLabel(control_frame, text="Rechercher client :").pack(
-            side="left", padx=5
-        )
+        ctk.CTkLabel(
+            control_frame, text="Rechercher client :", font=("Helvetica", 16)
+        ).pack(side="left", padx=5)
 
         self.client_search = ctk.CTkComboBox(control_frame, state="readonly", width=300)
         self.client_search.pack(side="left", padx=5)
@@ -61,7 +61,7 @@ class DisplayReservation(ctk.CTkFrame):
         """Remplit la liste déroulante des clients"""
         clients = [
             f"{c.FirstName} {c.LastName} ({c.identity})"
-            for c in self.db.list_clients.list_client
+            for c in self.db.list_clients.clients
         ]
         self.client_search.configure(values=clients)
 
@@ -81,9 +81,7 @@ class DisplayReservation(ctk.CTkFrame):
         self.reservations_tree.delete(*self.reservations_tree.get_children())
 
         for res in reservations:
-            salle = self.db.obtenir_salle_par_id(
-                res.room.nom
-            )  # Assure-toi que c’est bien 'nom'
+            salle = self.db.obtenir_salle_par_id(res.room.nom)
             debut = res.debut
             fin = res.fin
             duree = fin - debut

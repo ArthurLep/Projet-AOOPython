@@ -34,7 +34,9 @@ class DisplayListRoom(ctk.CTkFrame):
         self.rooms_tree.grid(row=0, column=0, sticky="nsew")
         vsb.grid(row=0, column=1, sticky="ns")
 
-        refresh_btn = ctk.CTkButton(tab, text="🔄 Actualiser", command=self.load_rooms)
+        refresh_btn = ctk.CTkButton(
+            tab, text="🔄 Actualiser", command=self.load_rooms, width=100
+        )
         refresh_btn.grid(row=1, column=0, pady=5)
 
         self.load_rooms()
@@ -42,7 +44,7 @@ class DisplayListRoom(ctk.CTkFrame):
     def load_rooms(self):
         """Charge la liste des salles dans le tableau"""
         self.rooms_tree.delete(*self.rooms_tree.get_children())
-        for salle in self.db.list_rooms.list_room:
+        for salle in self.db.list_rooms.rooms:
             self.rooms_tree.insert(
                 "", "end", values=(salle.nom, salle.type, salle.capacity)
             )
@@ -50,5 +52,5 @@ class DisplayListRoom(ctk.CTkFrame):
     def load_rooms_list(self):
         """Met à jour la liste déroulante des salles (si utilisée ailleurs)"""
         if self.room_search:
-            salles = [f"{s.type} ({s.nom})" for s in self.db.list_rooms.list_room]
+            salles = [f"{s.type} ({s.nom})" for s in self.db.list_rooms.rooms]
             self.room_search.configure(values=salles)

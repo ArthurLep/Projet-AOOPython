@@ -11,18 +11,19 @@ class DisplayListClient(ctk.CTkFrame):
         self.create_clients_tab()
 
     def create_clients_tab(self):
-        # Création du notebook (onglets)
+        # creation of the notebook
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill="both", expand=True)
 
-        # Création d'un onglet "Clients"
-        tab = ctk.CTkFrame(self.notebook)
-        self.notebook.add(tab, text="Clients")
+        # Creation of the client widget
+        tab = ctk.CTkFrame(self.notebook, fg_color="transparent")
+        self.notebook.add(tab, text=" Liste des clients :")
 
         tab.grid_rowconfigure(0, weight=1)
+        tab.grid_rowconfigure(1, weight=0)
         tab.grid_columnconfigure(0, weight=1)
 
-        # Treeview pour afficher la liste des clients
+        # Treeview to display the client list
         columns = ("ID", "Nom", "Prénom", "Email")
         self.clients_tree = ttk.Treeview(
             tab, columns=columns, show="headings", selectmode="browse"
@@ -32,15 +33,12 @@ class DisplayListClient(ctk.CTkFrame):
             self.clients_tree.heading(col, text=col)
             self.clients_tree.column(col, width=200)
 
-        # Scrollbar verticale
         vsb = ttk.Scrollbar(tab, orient="vertical", command=self.clients_tree.yview)
         self.clients_tree.configure(yscrollcommand=vsb.set)
 
-        # Placement dans la grille
         self.clients_tree.grid(row=0, column=0, sticky="nsew")
         vsb.grid(row=0, column=1, sticky="ns")
 
-        # Bouton de rafraîchissement
         refresh_btn = ctk.CTkButton(
             tab, text="🔄 Actualiser", command=self.load_clients, width=100
         )
@@ -49,9 +47,9 @@ class DisplayListClient(ctk.CTkFrame):
         self.load_clients()
 
     def load_clients(self):
-        """Charge la liste des clients dans le treeview"""
+        """Charge the client list in the treeview"""
         self.clients_tree.delete(*self.clients_tree.get_children())
-        for client in self.db.list_clients.list_client:
+        for client in self.db.list_clients.clients:
             self.clients_tree.insert(
                 "",
                 "end",
@@ -64,7 +62,7 @@ class DisplayListClient(ctk.CTkFrame):
             )
 
     def load_clients_list(self):
-        """Met à jour la liste déroulante des clients (si tu en as une ailleurs)"""
+        """Update the clients scrollbar"""
         if self.client_search:
             clients = [
                 f"{c.FirstName} {c.LastName} ({c.identity})"
