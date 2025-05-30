@@ -193,7 +193,7 @@ class MainView(ctk.CTk):
         self.views["afficher"] = display_frame
 
     def show_view(self, view_name):
-        """Affiche une vue et masque les autres"""
+        """Display view and mask the others"""
         for view in self.views.values():
             view.grid_forget()
         self.views[view_name].grid(row=0, column=0, sticky="nsew")
