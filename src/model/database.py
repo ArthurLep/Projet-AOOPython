@@ -124,11 +124,13 @@ class Database:
             self.list_clients.clients, self.list_rooms.rooms
         )
 
-    def list_available_rooms(self, debut, fin, type_salle=None):
-        salles = self.list_rooms.rooms
-        if type_salle and type_salle != "Tous":
-            salles = [s for s in salles if s.type == type_salle]
-        return salles
+    def list_available_rooms_on_period(self, debut, fin, type_salle=None):
+        available_rooms = []
+        for room in self.list_rooms.rooms:
+            if room.type == type_salle or type_salle is None:
+                if self.is_room_available(room.nom, debut, fin):
+                    available_rooms.append(room)
+        return available_rooms
 
     def reserver_salle(self, client_id, salle_id, debut, fin):
         client = next(
