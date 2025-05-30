@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
-from datetime import datetime
+from datetime import datetime, time
 
 
 class DisplayAvailableRoom(ctk.CTkFrame):
@@ -10,11 +10,13 @@ class DisplayAvailableRoom(ctk.CTkFrame):
         self.db = db
         self.start_date = None
         self.end_date = None
+        self.start_time_entry = None
+        self.end_time_entry = None
         self.availability_tree = None
         self.create_availability_tab()
 
     def create_availability_tab(self):
-        """Onglet de recherche de disponibilités"""
+        """Availability research widger"""
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill="both", expand=True)
 
@@ -24,26 +26,57 @@ class DisplayAvailableRoom(ctk.CTkFrame):
         tab.grid_rowconfigure(0, weight=1)
         tab.grid_columnconfigure(0, weight=1)
 
-        # Contrôles de date
+        # date control
         date_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        date_frame.grid(row=0, column=0, pady=10, sticky="ew")
+        date_frame.grid(row=0, column=0, pady=(0, 5), sticky="ew")
 
-        ctk.CTkLabel(date_frame, text="Début :").pack(side="left", padx=5)
+        label_debut = ctk.CTkLabel(date_frame, text="Début :", font=("Helvetica", 16))
+        label_debut.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
         self.start_date = DateEntry(
-            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR"
+            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR", width=40
         )
-        self.start_date.pack(side="left", padx=5)
+        self.start_date.grid(row=0, column=1, padx=5, pady=5)
 
-        ctk.CTkLabel(date_frame, text="Fin :").pack(side="left", padx=5)
-        self.end_date = DateEntry(date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR")
-        self.end_date.pack(side="left", padx=5)
+        label_start_time = ctk.CTkLabel(
+            date_frame,
+            text="Heure (HH:MM) :",
+            font=("Helvetica", 14),
+        )
+        label_start_time.grid(row=0, column=2, padx=5, pady=5)
+
+        self.start_time_entry = ctk.CTkEntry(date_frame, width=80)
+        self.start_time_entry.insert(0, "08:00")
+        self.start_time_entry.grid(row=0, column=3, padx=5, pady=5)
+
+        label_fin = ctk.CTkLabel(date_frame, text="Fin :", font=("Helvetica", 16))
+        label_fin.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+
+        self.end_date = DateEntry(
+            date_frame, date_pattern="dd/mm/yyyy", locale="fr_FR", width=40
+        )
+        self.end_date.grid(row=1, column=1, padx=5, pady=5)
+
+        label_end_time = ctk.CTkLabel(
+            date_frame,
+            text="Heure (HH:MM)",
+            font=("Helvetica", 14),
+        )
+        label_end_time.grid(row=1, column=2, padx=5, pady=5)
+
+        self.end_time_entry = ctk.CTkEntry(date_frame, width=80)
+        self.end_time_entry.insert(0, "18:00")
+        self.end_time_entry.grid(row=1, column=3, padx=5, pady=5)
 
         search_btn = ctk.CTkButton(
-            date_frame, text="🔍 Rechercher", command=self.check_availability
+            date_frame,
+            text="🔍 Rechercher",
+            font=("Helvetica", 13),
+            command=self.check_availability,
         )
-        search_btn.pack(side="left", padx=10)
+        search_btn.grid(row=0, column=4, rowspan=2, padx=10, pady=5)
 
-        # Tableau des résultats
+        # Result Table
         columns = ("ID Salle", "Type", "Capacité")
         self.availability_tree = ttk.Treeview(tab, columns=columns, show="headings")
 
@@ -60,9 +93,30 @@ class DisplayAvailableRoom(ctk.CTkFrame):
         vsb.grid(row=1, column=1, sticky="ns")
 
     def check_availability(self):
-        """Vérifie les disponibilités et affiche les résultats"""
-        debut = datetime.combine(self.start_date.get_date(), datetime.min.time())
-        fin = datetime.combine(self.end_date.get_date(), datetime.min.time())
+        """Verify availability and display results"""
+        try:
+            start_hour, start_minute = map(
+                int, self.start_time_entry.get().strip().split(":")
+            )
+            end_hour, end_minute = map(
+                int, self.end_time_entry.get().strip().split(":")
+            )
+            debut = datetime.combine(
+                self.start_date.get_date(), time(start_hour, start_minute)
+            )
+            fin = datetime.combine(self.end_date.get_date(), time(end_hour, end_minute))
+        except ValueError:
+            messagebox.showerror(
+                "Erreur de saisie", "Veuillez entrer l'heure au format HH:MM."
+            )
+            return
+
+        if debut >= fin:
+            messagebox.showerror(
+                "Erreur de période",
+                "La date/heure de début doit précéder la date/heure de fin.",
+            )
+            return
 
         salles = self.db.list_available_rooms_on_period(debut, fin)
 
