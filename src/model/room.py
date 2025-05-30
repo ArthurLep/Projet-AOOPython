@@ -12,16 +12,22 @@ class Room:
         self.type = type
         self.id = str(uuid.uuid4())
         if type == "Informatique":
-            if capacity < 1 or capacity > 4:
-                raise ErrorRoom("The room is too small.")
+            if capacity > 4:
+                raise ErrorRoom("The capacity is too big.")
+            elif capacity < 1:
+                raise ErrorRoom("The capacity is too small.")
         elif type == "Conférence":
-            if capacity < 4 or capacity > 10:
-                raise ErrorRoom("The room is too small.")
+            if capacity > 10:
+                raise ErrorRoom("The capacity is too big.")
+            elif capacity < 4:
+                raise ErrorRoom("The capacity is too small.")
         elif type == "Standard":
-            if capacity < 1 or capacity > 4:
-                raise ErrorRoom("The room is too small.")
+            if capacity > 4:
+                raise ErrorRoom("The capacity is too big.")
+            elif capacity < 1:
+                raise ErrorRoom("The capacity is too small.")
         else:
-            raise ErrorRoom("Invalid room type.")
+            raise ErrorRoom("Invalid room type. Must be 'Standard', 'Conférence', or 'Informatique'.")
 
     @classmethod
     def from_dict(cls, data: dict):
