@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "nom": "DarkRoom",
+        "type": "Standard",
+        "capacity": 4,
+        "id": "187ff961-48ab-442a-a1a2-684b5d40e448"
+    }
+]
