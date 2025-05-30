@@ -14,7 +14,6 @@ Les données sont stockées de manière persistante via un fichier **JSON**, gar
 
 ## 📁 Structure du projet
 
-
 ### 🖥️ Interface graphique
 
 L’application est destinée à un usage exclusivement administratif. Elle ne propose pas d’interface utilisateur client ni de système d’inscription ou de connexion.
@@ -38,6 +37,5 @@ Un calendrier interactif (via la bibliothèque tkcalendar) facilite la sélectio
 
 ## 📚 Différentes librairies utilisées 
 - `CustomTkinter` pour une interface plus moderne et personnalisable. 
-- `Tkinter` : bibliothèque graphique standard de Python
-- `Pillow` pour la gestion et manipulation d'images  
+- `Tkinter` : bibliothèque graphique standard de Python 
 - `tkcalendar` pour l’intégration du calendrier
