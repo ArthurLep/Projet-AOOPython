@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from ..view.add_client_view import AddClientView
-from ..view.display_view import DisplayView
 from ..view.add_room_view import AddRoomView
 from ..model.database import Database
 from ..view.reserve_view import ReserveView
@@ -61,35 +60,49 @@ class MainView(ctk.CTk):
 
     def create_views(self):
         # Vue Accueil
-        accueil_frame = ctk.CTkFrame(self.main_container)
+        accueil_frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         ctk.CTkLabel(
             accueil_frame,
             text="Bienvenue sur MeetingPro\nSélectionnez une action dans la barre latérale",
-            font=ctk.CTkFont(size=18),
+            font=ctk.CTkFont(size=25),
             justify="center",
         ).pack(expand=True)
         self.views["accueil"] = accueil_frame
 
         # View "Ajouter" Menu
-        ajouter_menu = ctk.CTkFrame(self.main_container)
+        ajouter_menu = ctk.CTkFrame(self.main_container, fg_color="transparent")
         ctk.CTkLabel(
             ajouter_menu, text="Que souhaitez-vous ajouter ?", font=ctk.CTkFont(size=30)
         ).pack(pady=40)
 
         btn_client = ctk.CTkButton(
-            ajouter_menu, text="Ajouter un nouveau client", command=self.show_add_client
+            ajouter_menu,
+            text="Ajouter un nouveau client",
+            command=self.show_add_client,
+            width=500,
+            height=50,
+            corner_radius=8,
+            font=("Helvetica", 22),
         )
-        btn_client.pack(pady=10)
+        btn_client.pack(
+            pady=50,
+        )
 
         btn_salle = ctk.CTkButton(
-            ajouter_menu, text="Ajouter une nouvelle salle", command=self.show_add_room
+            ajouter_menu,
+            text="Ajouter une nouvelle salle",
+            command=self.show_add_room,
+            width=500,
+            height=50,
+            corner_radius=8,
+            font=("Helvetica", 22),
         )
         btn_salle.pack(pady=10)
 
         self.views["ajouter_menu"] = ajouter_menu
 
         # Add Client View
-        ajouter_client_frame = ctk.CTkFrame(self.main_container)
+        ajouter_client_frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         self.add_client_view = AddClientView(
             ajouter_client_frame, self.database, on_success=self.show_accueil
         )
@@ -97,27 +110,27 @@ class MainView(ctk.CTk):
         self.views["ajouter_client"] = ajouter_client_frame
 
         # Add Room View
-        ajouter_salle_frame = ctk.CTkFrame(self.main_container)
+        ajouter_salle_frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         self.add_room_view = AddRoomView(ajouter_salle_frame, self.database)
         self.add_room_view.pack(fill="both", expand=True)
         self.views["ajouter_salle"] = ajouter_salle_frame
 
         # Reserve View
-        reserver_frame = ctk.CTkFrame(self.main_container)
+        reserver_frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         self.reserve_view = ReserveView(reserver_frame, self, self.database)
         self.reserve_view.pack(fill="both", expand=True)
         self.views["reserver"] = reserver_frame
 
         # Display view
-        display_frame = ctk.CTkFrame(self.main_container)
+        display_frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         display_frame.grid_rowconfigure(1, weight=1)
         display_frame.grid_columnconfigure(0, weight=1)
 
-        buttons_frame = ctk.CTkFrame(display_frame)
-        buttons_frame.grid(row=0, column=0, sticky="ew", pady=10, padx=10)
+        buttons_frame = ctk.CTkFrame(display_frame, fg_color="transparent")
+        buttons_frame.grid(row=0, column=0, sticky="ew", pady=10, padx=100)
 
-        content_frame = ctk.CTkFrame(display_frame)
-        content_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        content_frame = ctk.CTkFrame(display_frame, fg_color="transparent")
+        content_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
         content_frame.grid_rowconfigure(0, weight=1)
         content_frame.grid_columnconfigure(0, weight=1)
 
@@ -151,36 +164,41 @@ class MainView(ctk.CTk):
             self.current_display_view = DisplayReservation(content_frame, self.database)
             self.current_display_view.pack(fill="both", expand=True)
 
+        buttons_frame.grid_rowconfigure((0, 1), weight=1)
+        buttons_frame.grid_columnconfigure((0, 1), weight=1)
+
         btn_clients = ctk.CTkButton(
-            buttons_frame, text="Afficher liste client", command=show_clients
+            buttons_frame, text="Afficher liste des clients", command=show_clients
         )
         btn_salles = ctk.CTkButton(
-            buttons_frame, text="Afficher liste salle", command=show_rooms
+            buttons_frame, text="Afficher liste des salles", command=show_rooms
         )
         btn_salles_dispo = ctk.CTkButton(
-            buttons_frame, text="Afficher salle dispo", command=show_available_rooms
+            buttons_frame,
+            text="Afficher les salles disponibles pour un créneau",
+            command=show_available_rooms,
         )
         btn_reserv_client = ctk.CTkButton(
             buttons_frame,
-            text="Afficher réservation par client",
+            text="Afficher les réservations d'un client",
             command=show_reservations,
         )
 
-        btn_clients.pack(side="left", padx=5)
-        btn_salles.pack(side="left", padx=5)
-        btn_salles_dispo.pack(side="left", padx=5)
-        btn_reserv_client.pack(side="left", padx=5)
+        btn_clients.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+        btn_salles.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        btn_salles_dispo.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+        btn_reserv_client.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
         show_clients()
         self.views["afficher"] = display_frame
 
     def show_view(self, view_name):
-        """Affiche une vue et masque les autres"""
+        """Display view and mask the others"""
         for view in self.views.values():
             view.grid_forget()
         self.views[view_name].grid(row=0, column=0, sticky="nsew")
 
-    # Fonctions de navigation
+    # Navigation Functions
     def show_accueil(self):
         self.show_view("accueil")
 
