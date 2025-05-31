@@ -118,7 +118,7 @@ class DisplayAvailableRoom(ctk.CTkFrame):
             )
             return
 
-        salles = self.db.list_available_rooms(debut, fin)
+        salles = self.db.list_available_rooms_on_period(debut, fin)
 
         self.availability_tree.delete(*self.availability_tree.get_children())
         for salle in salles:

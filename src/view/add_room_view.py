@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from src.Model.room import Room, ErrorRoom
+from src.model.room import Room, ErrorRoom
 
 
 class AddRoomView(ctk.CTkFrame):
@@ -103,7 +103,7 @@ class AddRoomView(ctk.CTkFrame):
         self.erase_btn.pack(side="left", padx=(0, 0), pady=10)
 
     def _valider(self):
-        """Validate the informations entered by the user"""
+        """Validate the information entered by the user"""
         room_id = self.id_entry.get().strip()
         room_type = self.type_var.get()
         capacity = self.capacity_entry.get().strip()

@@ -1,1 +1,14 @@
-[]
+[
+    {
+        "nom": "DarkRoom",
+        "type": "Standard",
+        "capacity": 4,
+        "id": "187ff961-48ab-442a-a1a2-684b5d40e448"
+    },
+    {
+        "nom": "LightRoom",
+        "type": "Conf\u00e9rence",
+        "capacity": 10,
+        "id": "ef96d4d4-477c-4346-9cc5-8152021c8944"
+    }
+]
